@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="Navbar.html">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+  <style>
+    .form-floating {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-floating .form-control {
+      padding-left: 3rem; /* Add space for the icon */
+    }
+
+    .form-floating label {
+      padding-left: 3rem; /* Ensure label aligns with input text */
+    }
+
+    .form-floating i {
+      position: absolute;
+      top: 50%;
+      left: 0.75rem;
+      transform: translateY(-50%);
+      color: #6c757d;
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container h-100 my-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col-lg-12 col-xl-11">
+        <div class="card text-black" style="border-radius: 25px;">
+          <div class="card-body p-md-5">
+            <div class="row justify-content-center">
+              <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign in</p>
+                <span class="text-danger" th:errors="${patient.email}"></span>
+                <form class="mx-1 mx-md-4" th:action="@{/login}" method="post" >
+                  <!-- Email Field -->
+                  <div class="form-floating">
+                    <i class="bi bi-person-fill"></i>
+                    <input type="email" id="email" class="form-control" placeholder="Email" th:field="${patient.email}" required>
+                    <label for="email">Email</label>
+
+                  </div>
+
+                  <!-- Password Field -->
+                  <div class="form-floating">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                           required minlength="8" maxlength="20" th:value="${patient.password}">
+                    <label for="password">Password</label>
+                  </div>
+
+                  <!-- Register Button -->
+                  <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                    <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Image -->
+              <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                     class="img-fluid" alt="Sample image">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.js"></script>
+</body>
+</html>

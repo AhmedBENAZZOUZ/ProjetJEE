@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="Navbar.html">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+    <style>
+        .form-floating {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-floating .form-control {
+            padding-left: 3rem; /* Add space for the icon */
+        }
+
+        .form-floating label {
+            padding-left: 3rem; /* Ensure label aligns with input text */
+        }
+
+        .form-floating i {
+            position: absolute;
+            top: 50%;
+            left: 0.75rem;
+            transform: translateY(-50%);
+            color: #6c757d;
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+<div layout:fragment="content">
+<div class="container h-100 my-5">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-lg-12 col-xl-11">
+            <div class="card text-black" style="border-radius: 25px;">
+                <div class="card-body p-md-5">
+                    <div class="row justify-content-center">
+                        <div class="col-md-10 col-lg-6 col-xl-5 order-2 order-lg-1">
+                            <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+
+                            <form class="mx-1 mx-md-4" th:action="@{/register}" method="post" >
+                                <!-- Name Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-person-fill"></i>
+                                    <input type="text" id="name" class="form-control" placeholder="Your Name" th:field="${patient.name}">
+                                    <label for="name">Your Name</label>
+                                    <span class="text-danger" th:errors="${patient.name}"></span>
+                                </div>
+
+                                <div class="form-floating">
+                                    <i class="bi bi-person-fill"></i>
+                                    <input type="email" id="mail" class="form-control" placeholder="Your Name" th:field="${patient.email}">
+                                    <label for="mail">Your Name</label>
+                                    <span class="text-danger" th:errors="${patient.email}"></span>
+                                </div>
+
+                                <!--                                    &lt;!&ndash; Email Field &ndash;&gt;-->
+                                <!--                                    <div class="form-floating">-->
+                                <!--                                        <i class="bi bi-envelope-fill"></i>-->
+                                <!--                                        <input type="email" id="email" class="form-control" placeholder="Your Email" th:value="${patient.email}">-->
+                                <!--                                        <label for="email">Your Email</label>-->
+                                <!--                                        <span class="text-danger" th:errors="${patient.email}"></span>-->
+                                <!--                                    </div>-->
+
+                                <!-- Birth Date Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-calendar-fill"></i>
+                                    <input type="date" id="birthDate" name="birthDate" class="form-control" placeholder="Birth Date" required th:value="${patient.birthDate}">
+                                    <label for="birthDate">Birth Date</label>
+                                    <span class="text-danger" th:errors="${patient.birthDate}"></span>
+                                </div>
+
+                                <!-- Phone Number Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-phone-fill"></i>
+                                    <input type="text" id="phone" name="phone" class="form-control" placeholder="Phone Number"
+                                           required pattern="^[0-9]{8}$" th:value="${patient.phone}">
+                                    <label for="phone">Phone Number</label>
+                                    <span class="text-danger" th:errors="${patient.phone}"></span>
+                                </div>
+
+                                <!-- Gender Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-gender-ambiguous"></i>
+                                    <select id="gender" name="gender" class="form-select" required>
+                                        <option value="" selected disabled>Choose your gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                    <label for="gender">Gender</label>
+                                    <span class="text-danger" th:errors="${patient.gender}"></span>
+                                </div>
+
+                                <!-- Address Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-geo-alt-fill"></i>
+                                    <input type="text" id="address" name="address" class="form-control" placeholder="Your Address"
+                                           required minlength="5" maxlength="100" th:value="${patient.address}">
+                                    <label for="address">Your Address</label>
+                                    <span class="text-danger" th:errors="${patient.address}"></span>
+                                </div>
+
+                                <!-- Password Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                                           required minlength="8" maxlength="20" th:value="${patient.password}">
+                                    <label for="password">Password</label>
+                                    <span class="text-danger" th:errors="${patient.password}"></span>
+                                </div>
+
+                                <!-- Repeat Password Field -->
+                                <div class="form-floating">
+                                    <i class="bi bi-key-fill"></i>
+                                    <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Repeat your password" required>
+                                    <label for="confirmPassword">Repeat your password</label>
+                                    <span class="text-danger" th:errors="${patient.password}"></span>
+                                </div>
+
+                                <!--                                    &lt;!&ndash; Checkbox &ndash;&gt;-->
+                                <!--                                    <div class="form-check d-flex justify-content-center mb-5">-->
+                                <!--                                        <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3c">-->
+                                <!--                                        <label class="form-check-label" for="form2Example3">-->
+                                <!--                                            I agree to all statements in <a href="#!">Terms of service</a>-->
+                                <!--                                        </label>-->
+                                <!--                                    </div>-->
+
+                                <!-- Register Button -->
+                                <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                    <button type="submit" class="btn btn-primary btn-lg">Register</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Image -->
+                        <div class="col-md-10 col-lg-6 col-xl-7 d-flex align-items-center order-1 order-lg-2">
+                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp"
+                                 class="img-fluid" alt="Sample image">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.js"></script>
+</body>
+</html>
