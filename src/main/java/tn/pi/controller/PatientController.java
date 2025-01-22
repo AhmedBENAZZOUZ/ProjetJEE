@@ -91,4 +91,7 @@ public class PatientController {
         model.addAttribute("patient", new Patient());
         return "Doctor";
     }
+
+
+
 }
