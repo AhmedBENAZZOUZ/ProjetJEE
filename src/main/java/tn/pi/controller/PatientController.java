@@ -92,6 +92,4 @@ public class PatientController {
         return "Doctor";
     }
 
-
-
 }
