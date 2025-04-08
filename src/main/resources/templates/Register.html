@@ -7,6 +7,7 @@
     <title>Register</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
     <style>
         .form-floating {
             position: relative;
@@ -54,7 +55,7 @@
 
                                 <div class="form-floating">
                                     <i class="bi bi-person-fill"></i>
-                                    <input type="email" id="mail" class="form-control" placeholder="Your Name" th:field="${patient.email}">
+                                    <input type="email" id="mail" class="form-control" placeholder="Your Email" th:field="${patient.email}">
                                     <label for="mail">Your Name</label>
                                     <span class="text-danger" th:errors="${patient.email}"></span>
                                 </div>

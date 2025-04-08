@@ -11,6 +11,8 @@ import tn.pi.entity.Doctor;
 import tn.pi.entity.Patient;
 import tn.pi.repository.DoctorRepository;
 
+import java.util.Optional;
+
 @Controller
 public class DoctorController {
 
@@ -19,7 +21,7 @@ public class DoctorController {
         this.doctorRepository = doctorRepository;
     }
 
-    @GetMapping("/registerDoctor")
+    @GetMapping("/doctor/register")
     public String register(HttpSession session, Model model) {
 //        if (session.getAttribute("loggedInPatient") != null) {
 //            model.addAttribute("loggedInPatient", session.getAttribute("loggedInPatient"));
@@ -29,7 +31,7 @@ public class DoctorController {
         return "RegisterDoctor";
     }
 
-    @PostMapping("/registerDoctor")
+    @PostMapping("/doctor/register")
     public String registerDoctor(@Valid Doctor doctor, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "RegisterDoctor";
@@ -40,5 +42,36 @@ public class DoctorController {
         } catch (Exception e) {
             return "RegisterDoctor";
         }
+    }
+
+    @GetMapping("/doctor/login")
+    public String login(HttpSession session, Model model) {
+        if (session.getAttribute("loggedInDoctor") != null) {
+            model.addAttribute("loggedInDoctor", session.getAttribute("loggedInDoctor"));
+            return "redirect:/";
+        }
+        model.addAttribute("doctor", new Doctor());
+        return "LoginDoctor";
+    }
+
+    @PostMapping("/doctor/login")
+    public String loginDoctor(@Valid Doctor doctor, BindingResult bindingResult, HttpSession session) {
+        if (doctor.getEmail() == null || doctor.getEmail().isEmpty()) {
+            bindingResult.rejectValue("email", "error.doctor", "Email cannot be empty");
+            return "LoginDoctor";
+        }
+        Optional<Doctor> existingDoctor = doctorRepository.findByEmail(doctor.getEmail());
+        if (existingDoctor.isEmpty() || !existingDoctor.get().getPassword().equals(doctor.getPassword())) {
+            bindingResult.rejectValue("email", "error.doctor", "Invalid email or password");
+            return "LoginDoctor";
+        }
+        Doctor doctorLogged = existingDoctor.get();
+        session.setAttribute("loggedInDoctor", doctorLogged);
+        return "redirect:/";
+    }
+
+    @GetMapping("/doctor")
+    public String showDoctors() {
+        return "Doctor";
     }
 }

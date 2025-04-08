@@ -3,7 +3,6 @@ package tn.pi.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
-import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -19,15 +18,16 @@ public class Doctor {
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     private String name;
-//    @NotBlank(message = "Governorate cannot be blank")
-//    @Size(min = 2, max = 50, message = "Governorate must be between 2 and 50 characters")
-//    private String Governorate;
 
-    @NotBlank(message = "Speciality cannot be blank")
-    @Size(min = 5, message = "Speciality must be minimum of 5 characters")
-    private String speciality;
+    @NotBlank(message = "City cannot be blank")
+    @Size(min = 2, max = 50, message = "City must be between 2 and 50 characters")
+    private String city;
 
-//    @NotBlank(message = "Email is required")
+    @NotBlank(message = "Specialty cannot be blank")
+    @Size(min = 5, message = "Specialty must be minimum of 5 characters")
+    private String specialty;
+
+    @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
     private String email;
 

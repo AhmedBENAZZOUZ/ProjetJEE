@@ -81,15 +81,4 @@ public class PatientController {
         session.invalidate();
         return "redirect:/";
     }
-
-    @GetMapping("/doctor")
-    public String viewDoctors(HttpSession session, Model model) {
-        if (session.getAttribute("loggedInPatient") != null) {
-            model.addAttribute("loggedInPatient", session.getAttribute("loggedInPatient"));
-            return "redirect:/";
-        }
-        model.addAttribute("patient", new Patient());
-        return "Doctor";
-    }
-
 }

@@ -6,6 +6,7 @@
     <title>Doctors Portal</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
     <style>
         /* Custom styles */
         /* Custom styles */
@@ -71,8 +72,11 @@
             </ul>
             <ul class="navbar-nav ms-auto">
                 <!-- Logic for user status -->
-                <li class="nav-item" th:if="${session.loggedInPatient == null}">
+                <li class="nav-item" th:if="${session.loggedInPatient == null and session.loggedInDoctor == null}">
                     <a class="nav-link" th:href="@{/login}">Sign In</a>
+                </li>
+                <li class="nav-item" th:if="${session.loggedInPatient == null and session.loggedInDoctor == null}">
+                    <a class="nav-link" th:href="@{/register}">Sign Up</a>
                 </li>
                 <li class="nav-item dropdown" th:if="${session.loggedInPatient != null}">
                     <a class="nav-link dropdown-toggle" href="#" id="userMenu" role="button"
@@ -84,10 +88,16 @@
                         <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
                     </ul>
                 </li>
-                <!-- Sign Up link if not logged in -->
-<!--                <li class="nav-item" th:if="${session.loggedInPatient == null}">-->
-<!--                    <a class="nav-link" th:href="@{/register}">Sign Up</a>-->
-<!--                </li>-->
+                <li class="nav-item dropdown" th:if="${session.loggedInDoctor != null}">
+                    <a class="nav-link dropdown-toggle" href="#" id="doctorMenu" role="button"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="bi bi-person-circle"></i> Account
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                        <li><a class="dropdown-item" th:href="@{/profile}">Profile</a></li>
+                        <li><a class="dropdown-item" th:href="@{/logout}">Logout</a></li>
+                    </ul>
+                </li>
             </ul>
         </div>
     </div>

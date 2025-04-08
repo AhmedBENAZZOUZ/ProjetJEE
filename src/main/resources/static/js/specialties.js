@@ -1,0 +1,36 @@
+// specialties.js
+const specialties = [
+    "Médecine générale",
+    "Cardiologie",
+    "Dermatologie",
+    "Neurologie",
+    "Pédiatrie",
+    "Gynécologie-obstétrique",
+    "Chirurgie générale",
+    "Chirurgie orthopédique",
+    "Médecine dentaire",
+    "Oto-rhino-laryngologie (ORL)",
+    "Ophtalmologie",
+    "Psychiatrie",
+    "Radiologie",
+    "Urologie",
+    "Endocrinologie",
+    "Gastro-entérologie",
+    "Néphrologie",
+    "Médecine interne",
+    "Rhumatologie",
+    "Allergologie",
+    "Médecine légale",
+    "Médecine du travail",
+    "Chirurgie cardiaque",
+    "Chirurgie esthétique",
+    "Médecine physique et réadaptation",
+    "Médecine de rééducation",
+    "Médecine sportive",
+    "Oncologie",
+    "Gériatrie",
+    "Pathologie",
+    "Chirurgie vasculaire"
+];
+
+export { specialties };

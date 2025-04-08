@@ -1,11 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="Navbar.html">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Docteur</title>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
+  <script type="module" th:src="@{/js/cities.js}"></script>
+  <script type="module" th:src="@{/js/specialties.js}"></script>
   <style>
     .search-results-container {
       border: 2px solid #ccc; /* Bordure grise autour des résultats */
@@ -17,135 +22,85 @@
 </head>
 <body>
 
-
-<div class="container mt-4">
-  <div class="row">
-    <!-- Colonne gauche : Formulaire de recherche -->
-    <div class="col-md-3">
-      <h4>Recherche Docteur</h4>
-      <form>
-        <div class="mb-3">
-          <label for="doctorName" class="form-label">Nom du Docteur</label>
-          <input type="text" class="form-control" id="doctorName" placeholder="Nom du docteur">
-        </div>
-
-        <!-- Ville -->
-        <div class="mb-3">
-          <label for="city" class="form-label">Ville</label>
-          <select class="form-select" id="city" onchange="updateDelegations()">
-            <option selected disabled>Choisir une ville</option>
-            <option value="Tunis">Tunis</option>
-            <option value="Sfax">Sfax</option>
-            <option value="Sousse">Sousse</option>
-            <option value="Ariana">Ariana</option>
-            <option value="Gabès">Gabès</option>
-            <option value="Kairouan">Kairouan</option>
-            <option value="Bizerte">Bizerte</option>
-            <option value="Medenine">Medenine</option>
-            <option value="Nabeul">Nabeul</option>
-            <option value="Kasserine">Kasserine</option>
-            <option value="Tozeur">Tozeur</option>
-            <option value="Manouba">Manouba</option>
-            <option value="Mahdia">Mahdia</option>
-            <option value="Beja">Beja</option>
-            <option value="Zaghouan">Zaghouan</option>
-            <option value="Jendouba">Jendouba</option>
-            <option value="Siliana">Siliana</option>
-            <option value="Tataouine">Tataouine</option>
-            <option value="Kebili">Kebili</option>
-            <option value="El Kef">El Kef</option>
-            <!-- Ajouter d'autres villes si nécessaire -->
-          </select>
-        </div>
-
-        <!-- Délégation -->
-        <div class="mb-3">
-          <label for="delegation" class="form-label">Délégation</label>
-          <select class="form-select" id="delegation">
-            <option selected disabled>Choisir une délégation</option>
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="specialty" class="form-label">Spécialité</label>
-          <select class="form-select" id="specialty">
-            <option selected disabled>Choisir une spécialité</option>
-            <option value="Médecine générale">Médecine générale</option>
-            <option value="Cardiologie">Cardiologie</option>
-            <option value="Dermatologie">Dermatologie</option>
-            <option value="Neurologie">Neurologie</option>
-            <option value="Pédiatrie">Pédiatrie</option>
-            <option value="Gynécologie-obstétrique">Gynécologie-obstétrique</option>
-            <option value="Chirurgie générale">Chirurgie générale</option>
-            <option value="Chirurgie orthopédique">Chirurgie orthopédique</option>
-            <option value="Médecine dentaire">Médecine dentaire</option>
-            <option value="Oto-rhino-laryngologie">Oto-rhino-laryngologie (ORL)</option>
-            <option value="Ophtalmologie">Ophtalmologie</option>
-            <option value="Psychiatrie">Psychiatrie</option>
-            <option value="Radiologie">Radiologie</option>
-            <option value="Urologie">Urologie</option>
-            <option value="Endocrinologie">Endocrinologie</option>
-            <option value="Gastro-entérologie">Gastro-entérologie</option>
-            <option value="Néphrologie">Néphrologie</option>
-            <option value="Médecine interne">Médecine interne</option>
-            <option value="Rhumatologie">Rhumatologie</option>
-            <option value="Allergologie">Allergologie</option>
-            <option value="Médecine légale">Médecine légale</option>
-            <option value="Médecine du travail">Médecine du travail</option>
-            <option value="Chirurgie cardiaque">Chirurgie cardiaque</option>
-            <option value="Chirurgie esthétique">Chirurgie esthétique</option>
-            <option value="Médecine physique et réadaptation">Médecine physique et réadaptation</option>
-            <option value="Médecine de rééducation">Médecine de rééducation</option>
-            <option value="Médecine sportive">Médecine sportive</option>
-            <option value="Oncologie">Oncologie</option>
-            <option value="Gériatrie">Gériatrie</option>
-            <option value="Pathologie">Pathologie</option>
-            <option value="Chirurgie vasculaire">Chirurgie vasculaire</option>
-          </select>
-        </div>
-
-        <!-- Bouton "Trouver" -->
-        <button type="submit" class="btn btn-primary">Trouver</button>
-      </form>
-    </div>
-
-    <!-- Colonne centrale : Résultats -->
-    <div class="col-md-9">
-      <h4>Résultats de recherche</h4>
-      <div class="search-results-container">
-        <div class="row">
-          <!-- Exemple de résultat (Dr. Anna) -->
-          <div class="col-md-4 mb-4"> <!-- Ajout de la marge mb-4 pour espacement -->
-            <div class="card" style="width: 100%;"> <!-- Largeur à 100% pour une meilleure adaptation -->
-              <img src="/images/anna.jpg.jpg" class="card-img-top" alt="Dr. Anna, Spécialiste en médecine nucléaire" style="height: 200px; object-fit: cover;">
-              <div class="card-body">
-                <h5 class="card-title">Dr. Anna</h5>
-                <p class="card-text">Spécialiste en médecine nucléaire, Tunis.</p>
-                <a href="/Confirmationn.html" class="btn btn-primary">Prendre Rendez-vous</a>
-              </div>
-            </div>
+<div layout:fragment="content">
+  <div class="container mt-4">
+    <div class="row">
+      <!-- Colonne gauche : Formulaire de recherche -->
+      <div class="col-md-3">
+        <h4>Recherche Docteur</h4>
+        <form>
+          <div class="mb-3">
+            <label for="doctorName" class="form-label">Nom du Docteur</label>
+            <input type="text" class="form-control" id="doctorName" placeholder="Nom du docteur">
           </div>
 
-          <!-- Exemple de résultat (Dr. Marc) -->
-          <div class="col-md-4 mb-4"> <!-- Ajout de la marge mb-4 pour espacement -->
-            <div class="card" style="width: 100%;">
-              <img src="/images/a.jpg" class="card-img-top" alt="Dr. Marc, Cardiologue" style="height: 200px; object-fit: cover;">
-              <div class="card-body">
-                <h5 class="card-title">Dr. Marc</h5>
-                <p class="card-text">Cardiologue, Paris.</p>
-                <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
-              </div>
-            </div>
+          <!-- Ville -->
+          <div class="mb-3">
+            <label for="city" class="form-label">Ville</label>
+            <select class="form-select" id="city">
+              <option selected disabled>Choisir une ville</option>
+            </select>
           </div>
 
-          <!-- Exemple de résultat (Dr. Sofia) -->
-          <div class="col-md-4 mb-4"> <!-- Ajout de la marge mb-4 pour espacement -->
-            <div class="card" style="width: 100%;">
-              <img src="/images/b.jpg" class="card-img-top" alt="Dr. Sofia, Dermatologue" style="height: 200px; object-fit: cover;">
-              <div class="card-body">
-                <h5 class="card-title">Dr. Sofia</h5>
-                <p class="card-text">Dermatologue, Sfax.</p>
-                <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
+          <!-- Délégation -->
+<!--          <div class="mb-3">-->
+<!--            <label for="delegation" class="form-label">Délégation</label>-->
+<!--            <select class="form-select" id="delegation">-->
+<!--              <option selected disabled>Choisir une délégation</option>-->
+<!--            </select>-->
+<!--          </div>-->
+
+          <!-- Spécialité -->
+          <div class="mb-3">
+            <label for="specialty" class="form-label">Spécialité</label>
+            <select class="form-select" id="specialty">
+              <option selected disabled>Choisir une spécialité</option>
+            </select>
+          </div>
+
+          <!-- Bouton "Trouver" -->
+          <button type="submit" class="btn btn-primary">Trouver</button>
+        </form>
+      </div>
+
+      <!-- Colonne centrale : Résultats -->
+      <div class="col-md-9">
+        <h4>Résultats de recherche</h4>
+        <div class="search-results-container">
+          <div class="row">
+            <!-- Exemple de résultat (Dr. Anna) -->
+            <div class="col-md-4 mb-4">
+              <div class="card" style="width: 100%;">
+                <img src="/images/anna.jpg.jpg" class="card-img-top" alt="Dr. Anna, Spécialiste en médecine nucléaire" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h5 class="card-title">Dr. Anna</h5>
+                  <p class="card-text">Spécialiste en médecine nucléaire, Tunis.</p>
+                  <a href="/Confirmationn.html" class="btn btn-primary">Prendre Rendez-vous</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exemple de résultat (Dr. Marc) -->
+            <div class="col-md-4 mb-4">
+              <div class="card" style="width: 100%;">
+                <img src="/images/a.jpg" class="card-img-top" alt="Dr. Marc, Cardiologue" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h5 class="card-title">Dr. Marc</h5>
+                  <p class="card-text">Cardiologue, Paris.</p>
+                  <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Exemple de résultat (Dr. Sofia) -->
+            <div class="col-md-4 mb-4">
+              <div class="card" style="width: 100%;">
+                <img src="/images/b.jpg" class="card-img-top" alt="Dr. Sofia, Dermatologue" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                  <h5 class="card-title">Dr. Sofia</h5>
+                  <p class="card-text">Dermatologue, Sfax.</p>
+                  <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
+                </div>
               </div>
             </div>
           </div>
@@ -153,73 +108,89 @@
       </div>
     </div>
 
-
-
-
     <!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Ajouter un script pour gérer les résultats dynamiquement -->
-<script>
-  // Exemple de données de médecins
-  const doctors = [
-    { name: 'Dr. Anna', specialty: 'Médecine générale', city: 'Tunis', delegation: 'Cité El Khadra' },
-    { name: 'Dr. Ali', specialty: 'Cardiologie', city: 'Sfax', delegation: 'Sfax Ville' },
-    { name: 'Dr. Marie', specialty: 'Dermatologie', city: 'Sousse', delegation: 'Sousse Ville' },
-    // Ajouter d'autres médecins ici
-  ];
+    <!-- Script pour charger les villes et spécialités depuis JS et gérer les résultats -->
+    <script type="module">
+      import { cities } from '/js/cities.js';
+      import { specialties } from '/js/specialties.js';
 
-  // Fonction pour afficher les résultats de la recherche
-  function displayResults() {
-    const doctorName = document.getElementById('doctorName').value.toLowerCase();
-    const city = document.getElementById('city').value;
-    const delegation = document.getElementById('delegation').value;
-    const specialty = document.getElementById('specialty').value;
+      // Populate cities dropdown
+      const citySelect = document.getElementById('city');
+      cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        citySelect.appendChild(option);
+      });
 
-    // Filtrer les médecins en fonction des critères
-    const filteredDoctors = doctors.filter(doctor => {
-      return (
-              (doctorName === '' || doctor.name.toLowerCase().includes(doctorName)) &&
-              (city === '' || doctor.city === city) &&
-              (delegation === '' || doctor.delegation === delegation) &&
-              (specialty === '' || doctor.specialty === specialty)
-      );
-    });
+      // Populate specialties dropdown
+      const specialtySelect = document.getElementById('specialty');
+      specialties.forEach(specialty => {
+        const option = document.createElement('option');
+        option.value = specialty;
+        option.textContent = specialty;
+        specialtySelect.appendChild(option);
+      });
 
-    // Mettre à jour l'affichage des résultats
-    const resultsContainer = document.querySelector('.search-results-container .row');
-    resultsContainer.innerHTML = ''; // Réinitialiser les résultats
+      // Exemple de données de médecins
+      const doctors = [
+        { name: 'Dr. Anna', specialty: 'Médecine générale', city: 'Tunis', delegation: 'Cité El Khadra' },
+        { name: 'Dr. Ali', specialty: 'Cardiologie', city: 'Sfax', delegation: 'Sfax Ville' },
+        { name: 'Dr. Marie', specialty: 'Dermatologie', city: 'Sousse', delegation: 'Sousse Ville' },
+      ];
 
-    // Afficher les médecins filtrés
-    filteredDoctors.forEach(doctor => {
-      const doctorCard = document.createElement('div');
-      doctorCard.classList.add('col-md-4');
-      doctorCard.innerHTML = `
-        <div class="card mb-3">
-          <div class="card-body text-center">
-            <img src="/images/anna.jpg.jpg" class="rounded mb-3" alt="..." style="max-width: 100%; height: auto;">
-            <h5 class="card-title">${doctor.name}</h5>
-            <p class="card-text">${doctor.specialty}, ${doctor.city}</p>
-            <a href="#" class="btn btn-success">Prendre Rendez-vous</a>
+      // Fonction pour afficher les résultats de la recherche
+      function displayResults() {
+        const doctorName = document.getElementById('doctorName').value.toLowerCase();
+        const city = document.getElementById('city').value;
+        const delegation = document.getElementById('delegation').value;
+        const specialty = document.getElementById('specialty').value;
+
+        // Filtrer les médecins en fonction des critères
+        const filteredDoctors = doctors.filter(doctor => {
+          return (
+                  (doctorName === '' || doctor.name.toLowerCase().includes(doctorName)) &&
+                  (city === '' || doctor.city === city) &&
+                  (delegation === '' || doctor.delegation === delegation) &&
+                  (specialty === '' || doctor.specialty === specialty)
+          );
+        });
+
+        // Mettre à jour l'affichage des résultats
+        const resultsContainer = document.querySelector('.search-results-container .row');
+        resultsContainer.innerHTML = ''; // Réinitialiser les résultats
+
+        // Afficher les médecins filtrés
+        filteredDoctors.forEach(doctor => {
+          const doctorCard = document.createElement('div');
+          doctorCard.classList.add('col-md-4');
+          doctorCard.innerHTML = `
+          <div class="card mb-3">
+            <div class="card-body text-center">
+              <img src="/images/anna.jpg.jpg" class="rounded mb-3" alt="..." style="max-width: 100%; height: auto;">
+              <h5 class="card-title">${doctor.name}</h5>
+              <p class="card-text">${doctor.specialty}, ${doctor.city}</p>
+              <a href="#" class="btn btn-success">Prendre Rendez-vous</a>
+            </div>
           </div>
-        </div>
-      `;
-      resultsContainer.appendChild(doctorCard);
-    });
-  }
+        `;
+          resultsContainer.appendChild(doctorCard);
+        });
+      }
 
-  // Appeler displayResults lorsque le formulaire est soumis ou que des filtres sont modifiés
-  document.querySelector('form').addEventListener('submit', function(event) {
-    event.preventDefault(); // Empêcher la soumission du formulaire
-    displayResults();
-  });
+      // Appeler displayResults lorsque le formulaire est soumis ou que des filtres sont modifiés
+      document.querySelector('form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Empêcher la soumission du formulaire
+        displayResults();
+      });
 
-  // Appeler displayResults lorsque les filtres sont modifiés
-  document.querySelectorAll('select').forEach(function(select) {
-    select.addEventListener('change', displayResults);
-  });
-</script>
-
+      // Appeler displayResults lorsque les filtres sont modifiés
+      document.querySelectorAll('select').forEach(function(select) {
+        select.addEventListener('change', displayResults);
+      });
+    </script>
   </div>
 </body>
 </html>
