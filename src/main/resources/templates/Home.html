@@ -2,502 +2,856 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="Navbar.html">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DoctorPortal</title>
     <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
     <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script type="module" th:src="@{/js/cities.js}"></script>
+    <script type="module" th:src="@{/js/specialties.js}"></script>
     <style>
         /* Global Styles */
         body {
-            background-color: #f8f9fa; /* Light background for better contrast */
-            font-family: 'Roboto', sans-serif;
-            color: #343a40; /* Dark text for readability */
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            background-color: #f8fafc;
         }
 
-        .form-floating {
+        /* Hero Section */
+        .hero-section {
             position: relative;
-            margin-bottom: 1.5rem;
+            height: 500px;
+            overflow: hidden;
+            background-image: url('/images/doctors.jpg');
+            background-size: cover;
+            background-position: center;
         }
 
-        .form-floating .form-control {
-            padding-left: 3rem;
-        }
-
-        .form-floating label {
-            padding-left: 3rem;
-        }
-
-        .form-floating i {
+        .hero-overlay {
             position: absolute;
-            top: 50%;
-            left: 0.75rem;
-            transform: translateY(-50%);
-            color: #6c757d;
-            font-size: 1.2rem;
-            pointer-events: none;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 60, 113, 0.8), rgba(0, 123, 255, 0.6));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
         }
 
-        /* Carousel Styles */
-        .carousel {
-            margin-top: 2rem;
-            max-width: 1000px;
+        .hero-content h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-content p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            color: #fff;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .carousel-item img {
+        .btn-hero {
+            background-color: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-hero:hover {
+            background-color: #fff;
+            color: #0056b3;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search Form */
+        .search-container {
+            position: relative;
+            margin-top: -80px;
+            z-index: 100;
+        }
+
+        .search-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .search-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .search-card .card-header {
+            background: linear-gradient(135deg, #1e88e5, #0d47a1);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: none;
+        }
+
+        .search-card .card-header h3 {
+            font-weight: 600;
+            margin: 0;
+            font-size: 1.75rem;
+        }
+
+        .search-card .card-body {
+            padding: 30px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #1e88e5;
+            box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.2);
+            background-color: #fff;
+        }
+
+        .input-group-text {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-right: none;
+            border-radius: 10px 0 0 10px;
+            color: #757575;
+            padding: 0 15px;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 10px 10px 0;
+        }
+
+        .btn-search {
+            background: linear-gradient(135deg, #1e88e5, #0d47a1);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 25px;
+            font-weight: 600;
             width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-search:hover {
+            background: linear-gradient(135deg, #0d47a1, #1a237e);
+            box-shadow: 0 5px 15px rgba(30, 136, 229, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-search i {
+            margin-right: 8px;
+        }
+
+        /* Feature Section */
+        .features-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, #1e88e5, #0d47a1);
+            margin: 0 auto;
+            border-radius: 2px;
+        }
+
+        .feature-box {
+            text-align: center;
+            padding: 30px;
+            border-radius: 16px;
+            background-color: #fff;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-box:hover .feature-icon {
+            transform: scale(1.1);
+        }
+
+        .feature-box h4 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .feature-box p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        /* Carousel Section */
+        .carousel-section {
+            padding: 80px 0;
+            background-color: #f8fafc;
+        }
+
+        .carousel-item {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-item img {
             height: 400px;
             object-fit: cover;
         }
 
         .carousel-caption {
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 15px;
-        }
-
-        .carousel-caption h5, .carousel-caption p {
-            color: white;
-            font-weight: 500;
-        }
-
-        /* Card & Form Styles */
-        .card {
-            background-color: #ffffff;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            border-radius: 12px 12px 0 0;
-            font-size: 1.25rem;
-        }
-
-        .card-body {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+            border-radius: 0 0 16px 16px;
             padding: 30px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: left;
         }
 
-        .form-control, .form-select {
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #007bff, #0056b3);
-            border: none;
-            color: white;
-            font-weight: 600;
-            border-radius: 8px;
-            padding: 12px 24px;
-            width: 100%;
-            transition: 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #0056b3, #003f8a);
-        }
-
-        .btn-outline-light {
-            color: #fff;
-            border-color: #fff;
-            padding: 10px 20px;
-            border-radius: 50px;
-            transition: 0.3s ease;
-        }
-
-        .btn-outline-light:hover {
-            background-color: #fff;
-            color: #007bff;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: auto;
-        }
-
-        /* Section Specific Styles */
-        .bg-image {
-            height: 400px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            position: relative;
-            border-radius: 8px;
-        }
-
-        .mask {
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 30px;
-        }
-
-        .mask h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        /* Icon Box */
-        .icon-box {
-            margin-bottom: 30px;
-        }
-
-        .icon-box img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            transition: transform 0.3s;
-        }
-
-        .icon-box:hover img {
-            transform: scale(1.1);
-        }
-
-        .icon-box h4 {
+        .carousel-caption h5 {
+            font-size: 1.75rem;
             font-weight: 600;
             margin-bottom: 10px;
         }
 
-        .icon-box p {
-            font-size: 1rem;
-            color: #6c757d;
+        .carousel-caption p {
+            font-size: 1.1rem;
         }
 
+        /* Tabs Section */
+        .tabs-section {
+            padding: 80px 0;
+            background-color: #fff;
+        }
+
+        .nav-tabs {
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .nav-tabs .nav-link {
+            border: none;
+            color: #666;
+            font-weight: 500;
+            padding: 15px 20px;
+            border-radius: 0;
+            margin-right: 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #1e88e5;
+            background-color: transparent;
+        }
+
+        .nav-tabs .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #1e88e5;
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #0c2d48;
+            color: #fff;
+            padding: 80px 0 0;
+        }
+
+        .footer h5 {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+            font-size: 1.25rem;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #1e88e5;
+            border-radius: 3px;
+        }
+
+        .footer-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-list li {
+            margin-bottom: 15px;
+        }
+
+        .footer-list a {
+            color: #ccc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: block;
+            position: relative;
+            padding-left: 15px;
+        }
+
+        .footer-list a:before {
+            content: '›';
+            position: absolute;
+            left: 0;
+            color: #1e88e5;
+            transition: transform 0.3s ease;
+        }
+
+        .footer-list a:hover {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        .footer-list a:hover:before {
+            transform: translateX(3px);
+        }
+
+        .footer-bottom {
+            background-color: #072238;
+            padding: 20px 0;
+            margin-top: 60px;
+        }
+
+        .footer-bottom a {
+            color: #1e88e5;
+            text-decoration: none;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 992px) {
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .search-container {
+                margin-top: -50px;
+            }
+
+            .feature-box {
+                margin-bottom: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 400px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .hero-content p {
+                font-size: 1rem;
+            }
+
+            .search-card .card-body {
+                padding: 20px;
+            }
+
+            .search-form-row > div {
+                margin-bottom: 15px;
+            }
+
+            .search-container {
+                margin-top: -30px;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
 <div layout:fragment="content">
-    <div class="p-5 text-center bg-image" style="background-image: url('/images/doctors.jpg');">
-        <div class="mask">
-            <div class="d-flex justify-content-center align-items-center h-100 text-white">
-                <div>
-                    <h1>Vous êtes médecin ou professionnel de santé ? Rejoignez-nous!</h1>
-                    <a data-mdb-ripple-init class="btn btn-outline-light btn-lg" th:href="@{/doctor/register}" role="button">
-                        Rejoignez-nous
-                    </a>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay">
+            <div class="hero-content">
+                <h1>Trouvez Votre Médecin Idéal</h1>
+                <p>Connectez-vous avec des professionnels de santé qualifiés en quelques clics et prenez rendez-vous facilement</p>
+                <a class="btn btn-hero" th:href="@{/doctor/register}" role="button">
+                    <i class="bi bi-person-plus-fill me-2"></i>Rejoignez-nous
+                </a>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Search Form -->
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-sm">
-                    <div class="card-header text-center">
-                        <h3>Rechercher un Professionnel de Santé</h3>
+    <section class="search-container">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 col-lg-8">
+                    <div class="search-card">
+                        <div class="card-header">
+                            <h3><i class="bi bi-search me-2"></i>Rechercher un Professionnel de Santé</h3>
+                        </div>
+                        <div class="card-body">
+                            <form th:action="@{/doctor}" method="GET">
+                                <div class="row g-4 search-form-row">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                                            <input type="text" class="form-control" id="name" name="doctorName" th:value="${name}" placeholder="Nom du docteur">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-geo-alt-fill"></i></span>
+                                            <select class="form-select" id="city" name="city" th:data-selected-city="${city}">
+                                                <option selected disabled value="">Ville</option>
+                                                <!-- Populated by JavaScript -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <span class="input-group-text"><i class="bi bi-clipboard2-pulse-fill"></i></span>
+                                            <select class="form-select" id="specialty" name="specialty">
+                                                <option selected disabled value="">Spécialité</option>
+                                                <!-- Populated by JavaScript -->
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <button type="submit" class="btn btn-search">
+                                            <i class="bi bi-search"></i>Rechercher
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <form action="/search" method="GET">
-                            <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <label for="name" class="form-label">Nom</label>
-                                    <input type="text" class="form-control" id="name" name="name" placeholder="Nom">
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="specialty" class="form-label">Spécialité</label>
-                                    <select class="form-select" id="specialty" name="specialty">
-                                        <option value="">Sélectionner une spécialité</option>
-                                        <option value="Cardiologue">Cardiologue</option>
-                                        <option value="Dentiste">Dentiste</option>
-                                        <option value="Généraliste">Généraliste</option>
-                                        <option value="Pédiatre">Pédiatre</option>
-                                        <option value="Dermatologue">Dermatologue</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3">
-                                    <label for="country" class="form-label">Pays</label>
-                                    <select class="form-select" id="country" name="country">
-                                        <option value="Tunisie">Tunisie</option>
-                                    </select>
-                                </div>
-                                <div class="col-md-3 mb-3 d-flex align-items-end">
-                                    <button type="submit" class="btn btn-primary">Rechercher</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Carousel -->
-    <div id="carouselExample" class="carousel slide carousel-fade mt-5">
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="/images/assurance.png" class="d-block w-100" alt="Insurance Services">
-                <div class="carousel-caption">
-                    <h5>Insurance Services</h5>
-                    <p>Access comprehensive health insurance plans tailored for you.</p>
-                </div>
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Pourquoi utiliser notre plateforme?</h2>
             </div>
-            <div class="carousel-item">
-                <img src="/images/santé.png" class="d-block w-100" alt="Healthcare Services">
-                <div class="carousel-caption">
-                    <h5>Healthcare Services</h5>
-                    <p>Find trusted doctors and healthcare professionals near you.</p>
-                </div>
-            </div>
-            <div class="carousel-item">
-                <img src="/images/svr.png" class="d-block w-100" alt="Medical Solutions">
-                <div class="carousel-caption">
-                    <h5>Medical Solutions</h5>
-                    <p>Explore cutting-edge solutions for all your healthcare needs.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Reasons Section -->
-    <div class="container mt-5 text-center">
-        <h2 class="mb-4">Pourquoi utiliser notre plateforme?</h2>
-        <div class="row">
-            <div class="col-md-4 icon-box">
-                <img src="/images/success.png" alt="Success">
-                <h4>Facile d'accès</h4>
-                <p>Accédez à des professionnels de santé qualifiés, facilement et rapidement.</p>
-            </div>
-            <div class="col-md-4 icon-box">
-                <img src="/images/quality.png" alt="Quality">
-                <h4>Qualité et fiabilité</h4>
-                <p>Des services de qualité, certifiés et vérifiés pour votre santé.</p>
-            </div>
-            <div class="col-md-4 icon-box">
-                <img src="/images/secure.png" alt="Secure">
-                <h4>Transactions sécurisées</h4>
-                <p>Toutes vos données et paiements sont protégés grâce à des systèmes sécurisés.</p>
-            </div>
-        </div>
-    </div>
-
-<!-- tab content -->
-    <!-- Tabs navs -->
-    <ul class="nav nav-tabs mb-3" id="ex1" role="tablist">
-        <li class="nav-item" role="presentation">
-            <a
-                    data-mdb-tab-init
-                    class="nav-link active"
-                    id="ex1-tab-1"
-                    href="#ex1-tabs-1"
-                    role="tab"
-                    aria-controls="ex1-tabs-1"
-                    aria-selected="true"
-            >Actes médicaux</a
-            >
-        </li>
-        <li class="nav-item" role="presentation">
-            <a
-                    data-mdb-tab-init
-                    class="nav-link"
-                    id="ex1-tab-2"
-                    href="#ex1-tabs-2"
-                    role="tab"
-                    aria-controls="ex1-tabs-2"
-                    aria-selected="false"
-            >Questions</a
-            >
-        </li>
-        <li class="nav-item" role="presentation">
-            <a
-                    data-mdb-tab-init
-                    class="nav-link"
-                    id="ex1-tab-3"
-                    href="#ex1-tabs-3"
-                    role="tab"
-                    aria-controls="ex1-tabs-3"
-                    aria-selected="false"
-            >Magazine</a
-            >
-        </li>
-    </ul>
-    <!-- Tabs navs -->
-
-    <!-- Tabs content -->
-    <div class="tab-content" id="ex1-content">
-        <div
-                class="tab-pane fade show active"
-                id="ex1-tabs-1"
-                role="tabpanel"
-                aria-labelledby="ex1-tab-1"
-        >
-            Contenu des actes médicaux
-        </div>
-        <div class="tab-pane fade" id="ex1-tabs-2" role="tabpanel" aria-labelledby="ex1-tab-2">
-            Contenu des questions
-        </div>
-        <div class="tab-pane fade" id="ex1-tabs-3" role="tabpanel" aria-labelledby="ex1-tab-3">
-            Contenu du magazine
-        </div>
-    </div>
-    <!-- Tabs content -->
-
-
-    <!-- footer -->
-    <footer class="bg-body-tertiary text-center text-lg-start">
-        <!-- Grid container -->
-        <div class="container p-4">
-            <!--Grid row-->
             <div class="row">
-
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase mb-0">Doctor.tn Premier Réseau
-                        Médical Professionnel</h5>
-
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="#!" class="text-body">Qui sommes nous ? </a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Nous contacter </a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Conditions Générales d'Utilisation</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Politique de Confidentialité</a>
-                        </li>
-                    </ul>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <img src="/images/accesfacile.png" alt="Easy Access" class="feature-icon">
+                        <h4>Facile d'accès</h4>
+                        <p>Accédez à des professionnels de santé qualifiés, facilement et rapidement pour tous vos besoins médicaux.</p>
+                    </div>
                 </div>
-                <!--Grid column-->
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Que cherchez-vous ?</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="#!" class="text-body">Professionnel de santé</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Pharmacie</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Médicament</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Questions médicales</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Clinique</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Laboratoire</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Parapharmacie</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Magazine Médical</a>
-                        </li>
-                    </ul>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <img src="/images/quality.png" alt="Quality" class="feature-icon">
+                        <h4>Qualité et fiabilité</h4>
+                        <p>Des services de qualité, certifiés et vérifiés pour assurer la meilleure prise en charge de votre santé.</p>
+                    </div>
                 </div>
-
-
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase">Recherches fréquentes</h5>
-
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="#!" class="text-body">Cardiologue Ariana</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Chirurgien Orthopédiste Traumatologue Ben arous</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Dentiste Bizerte</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Dermatologue Gabes</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Gastro-entérologue Gafsa</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Généraliste Monastir</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Gynécologue Obstétricien Nabeul</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Ophtalmologiste Sfax</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Oto-Rhino-Laryngologiste (ORL) Sousse</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Psychiatre Tunis</a>
-                        </li>
-                    </ul>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-box">
+                        <img src="/images/secure.png" alt="Secure" class="feature-icon">
+                        <h4>Transactions sécurisées</h4>
+                        <p>Toutes vos données et paiements sont protégés grâce à des systèmes sécurisés de haute technologie.</p>
+                    </div>
                 </div>
-
-                <!--Grid column-->
-
-                <!--Grid column-->
-                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
-                    <h5 class="text-uppercase mb-0">Recherches fréquentes</h5>
-
-                    <ul class="list-unstyled">
-                        <li>
-                            <a href="#!" class="text-body">Trouver un docteur</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un dentiste</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un dermato</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un gastro</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un généraliste</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un gynéco</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un kiné</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un ophtalmo</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un ORL</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un pédiatre</a>
-                        </li>
-                        <li>
-                            <a href="#!" class="text-body">Trouver un psy</a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!--Grid column-->
             </div>
-            <!--Grid row-->
         </div>
-        <!-- Grid container -->
+    </section>
 
-        <!-- Copyright -->
-        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
-            © 2020 Copyright:
-            <a class="text-body" href="https://mdbootstrap.com/">MDBootstrap.com</a>
+    <!-- Carousel Section -->
+    <section class="carousel-section">
+        <div class="container">
+            <div id="healthCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="/images/assurance.png" class="d-block w-100" alt="Insurance Services">
+                        <div class="carousel-caption">
+                            <h5>Services d'Assurance</h5>
+                            <p>Accédez à des plans d'assurance santé complets adaptés à vos besoins spécifiques.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/santé.png" class="d-block w-100" alt="Healthcare Services">
+                        <div class="carousel-caption">
+                            <h5>Services de Santé</h5>
+                            <p>Trouvez des médecins et des professionnels de santé de confiance près de chez vous.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <img src="/images/svr.png" class="d-block w-100" alt="Medical Solutions">
+                        <div class="carousel-caption">
+                            <h5>Solutions Médicales</h5>
+                            <p>Explorez des solutions de pointe pour tous vos besoins en matière de soins de santé.</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#healthCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#healthCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
+            </div>
         </div>
-        <!-- Copyright -->
+    </section>
+
+    <!-- Tabs Section -->
+    <section class="tabs-section">
+        <div class="container">
+            <ul class="nav nav-tabs" id="healthTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="acts-tab" data-bs-toggle="tab" data-bs-target="#acts-tab-pane" type="button" role="tab" aria-controls="acts-tab-pane" aria-selected="true">
+                        <i class="bi bi-clipboard2-pulse me-2"></i>Actes médicaux
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="questions-tab" data-bs-toggle="tab" data-bs-target="#questions-tab-pane" type="button" role="tab" aria-controls="questions-tab-pane" aria-selected="false">
+                        <i class="bi bi-question-circle me-2"></i>Questions
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="magazine-tab" data-bs-toggle="tab" data-bs-target="#magazine-tab-pane" type="button" role="tab" aria-controls="magazine-tab-pane" aria-selected="false">
+                        <i class="bi bi-journal-medical me-2"></i>Magazine
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="healthTabsContent">
+                <div class="tab-pane fade show active" id="acts-tab-pane" role="tabpanel" aria-labelledby="acts-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="mb-4">Actes médicaux</h3>
+                            <p>Découvrez tous les types d'actes médicaux proposés par nos professionnels de santé certifiés. Consultations, examens, chirurgies et bien plus encore sont disponibles pour répondre à tous vos besoins de santé.</p>
+                            <p>Nos médecins sont formés aux techniques les plus récentes et utilisent des équipements modernes pour garantir les meilleurs soins possibles.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="questions-tab-pane" role="tabpanel" aria-labelledby="questions-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="mb-4">Questions fréquentes</h3>
+                            <p>Consultez notre base de connaissances de questions médicales fréquemment posées. Nos experts ont répondu à des milliers de questions pour vous aider à mieux comprendre votre santé.</p>
+                            <p>Vous pouvez également poser vos propres questions et recevoir des réponses de nos professionnels qualifiés.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="magazine-tab-pane" role="tabpanel" aria-labelledby="magazine-tab" tabindex="0">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="mb-4">Magazine médical</h3>
+                            <p>Restez informé des dernières actualités et avancées médicales grâce à notre magazine en ligne. Nos articles sont rédigés par des experts et couvrent une large gamme de sujets liés à la santé et au bien-être.</p>
+                            <p>Abonnez-vous à notre newsletter pour recevoir régulièrement du contenu médical de qualité directement dans votre boîte mail.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col col-md-6 mb-4">
+                    <h5>Doctor.tn Premier Réseau Médical</h5>
+                    <ul class="footer-list">
+                        <li><a href="#">Qui sommes nous ?</a></li>
+                        <li><a href="#">Nous contacter</a></li>
+                        <li><a href="#">Conditions Générales d'Utilisation</a></li>
+                        <li><a href="#">Politique de Confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Que cherchez-vous ?</h5>
+                    <ul class="footer-list">
+                        <li><a href="#">Professionnel de santé</a></li>
+                        <li><a href="#">Pharmacie</a></li>
+                        <li><a href="#">Médicament</a></li>
+                        <li><a href="#">Questions médicales</a></li>
+                        <li><a href="#">Clinique</a></li>
+                        <li><a href="#">Laboratoire</a></li>
+                        <li><a href="#">Parapharmacie</a></li>
+                        <li><a href="#">Magazine Médical</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Recherches fréquentes</h5>
+                    <ul class="footer-list">
+                        <li><a href="#">Cardiologue Ariana</a></li>
+                        <li><a href="#">Chirurgien Orthopédiste Ben Arous</a></li>
+                        <li><a href="#">Dentiste Bizerte</a></li>
+                        <li><a href="#">Dermatologue Gabes</a></li>
+                        <li><a href="#">Gastro-entérologue Gafsa</a></li>
+                        <li><a href="#">Généraliste Monastir</a></li>
+                        <li><a href="#">Gynécologue Nabeul</a></li>
+                        <li><a href="#">Ophtalmologiste Sfax</a></li>
+                        <li><a href="#">ORL Sousse</a></li>
+                        <li><a href="#">Psychiatre Tunis</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Trouver un spécialiste</h5>
+                    <ul class="footer-list">
+                        <li><a href="#">Trouver un docteur</a></li>
+                        <li><a href="#">Trouver un dentiste</a></li>
+                        <li><a href="#">Trouver un dermato</a></li>
+                        <li><a href="#">Trouver un gastro</a></li>
+                        <li><a href="#">Trouver un généraliste</a></li>
+                        <li><a href="#">Trouver un gynéco</a></li>
+                        <li><a href="#">Trouver un kiné</a></li>
+                        <li><a href="#">Trouver un ophtalmo</a></li>
+                        <li><a href="#">Trouver un ORL</a></li>
+                        <li><a href="#">Trouver un pédiatre</a></li>
+                        <li><a href="#">Trouver un psy</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <div class="container">
+                <p class="mb-0">© 2025 Doctor.tn - Tous droits réservés.</p>
+            </div>
+        </div>
     </footer>
 </div>
+
 <script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.js"></script>
-</body>
-</html>
+<script type="module">
+    import { cities } from '/js/cities.js';
+    import { specialties } from '/js/specialties.js';
+
+    // Populate cities dropdown
+    const citySelect = document.getElementById('city');
+    cities.forEach(city => {
+        const option = document.createElement('option');
+        option.value = city;
+        option.textContent = city;
+        if (city === citySelect.dataset.selectedCity) option.selected = true; // Use data attribute
+        citySelect.appendChild(option);
+    });
+
+    // Populate specialties dropdown
+    const specialtySelect = document.getElementById('specialty');
+    specialties.forEach(specialty => {
+        const option = document.createElement('option');
+        option.value = specialty;
+        option.textContent = specialty;
+        if (specialty === '[[${specialty}]]') option.selected = true;
+        specialtySelect.appendChild(option);
+    });
+
+    // Enable Bootstrap tooltips
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    // Add animations for elements when they come into view
+    const animateOnScroll = () => {
+        const elements = document.querySelectorAll('.feature-box, .search-card, .section-title');
+        elements.forEach(element => {
+            const elementPosition = element.getBoundingClientRect().top;
+            const windowHeight = window.innerHeight;
+            if (elementPosition < windowHeight - 50) {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0)';
+            }
+        });
+    };
+
+    // Set initial styles for animations
+    document.querySelectorAll('.feature-box, .section-title').forEach(element => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
+
+    // Run animation check on load and scroll
+    window.addEventListener('load', animateOnScroll);
+    window.addEventListener('scroll', animateOnScroll);
+
+    // Make carousel autoplay
+    const healthCarousel = new bootstrap.Carousel(document.getElementById('healthCarousel'), {
+        interval: 5000,
+        wrap: true,
+        touch: true
+    });
+
+    // Add search form validation
+    const searchForm = document.querySelector('form');
+    searchForm.addEventListener('submit', function(event) {
+        let isValid = false;
+        const nameInput = document.getElementById('name');
+        const citySelect = document.getElementById('city');
+        const specialtySelect = document.getElementById('specialty');
+
+        // Check if at least one field has a value
+        if (nameInput.value.trim() !== '' ||
+            citySelect.value !== '' && citySelect.value !== 'Ville' ||
+            specialtySelect.value !== '' && specialtySelect.value !== 'Spécialité') {
+            isValid = true;
+        }
+
+        if (!isValid) {
+            event.preventDefault();
+            alert('Veuillez remplir au moins un champ de recherche.');
+        }
+    });
+
+    // Add a back-to-top button functionality
+    const createBackToTopButton = () => {
+        // Create the button element
+        const backToTopBtn = document.createElement('button');
+        backToTopBtn.innerHTML = '<i class="bi bi-arrow-up"></i>';
+        backToTopBtn.className = 'back-to-top';
+        backToTopBtn.setAttribute('title', 'Retour en haut');
+
+        // Style the button
+        backToTopBtn.style.position = 'fixed';
+        backToTopBtn.style.bottom = '20px';
+        backToTopBtn.style.right = '20px';
+        backToTopBtn.style.zIndex = '99';
+        backToTopBtn.style.width = '50px';
+        backToTopBtn.style.height = '50px';
+        backToTopBtn.style.borderRadius = '50%';
+        backToTopBtn.style.backgroundColor = '#1e88e5';
+        backToTopBtn.style.color = 'white';
+        backToTopBtn.style.border = 'none';
+        backToTopBtn.style.fontSize = '20px';
+        backToTopBtn.style.cursor = 'pointer';
+        backToTopBtn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+        backToTopBtn.style.transition = 'all 0.3s ease';
+        backToTopBtn.style.display = 'none';
+
+        // Add hover effect
+        backToTopBtn.addEventListener('mouseover', () => {
+            backToTopBtn.style.backgroundColor = '#0d47a1';
+            backToTopBtn.style.transform = 'translateY(-3px)';
+            backToTopBtn.style.boxShadow = '0 6px 15px rgba(0,0,0,0.3)';
+        });
+
+        backToTopBtn.addEventListener('mouseout', () => {
+            backToTopBtn.style.backgroundColor = '#1e88e5';
+            backToTopBtn.style.transform = 'translateY(0)';
+            backToTopBtn.style.boxShadow = '0 4px 10px rgba(0,0,0,0.2)';
+        });
+
+        // Add scroll event to show/hide button
+        window.addEventListener('scroll', () => {
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                backToTopBtn.style.display = 'block';
+                backToTopBtn.style.opacity = '1';
+            } else {
+                backToTopBtn.style.opacity = '0';
+                setTimeout(() => {
+                    if (document.body.scrollTop <= 300 && document.documentElement.scrollTop <= 300) {
+                        backToTopBtn.style.display = 'none';
+                    }
+                }, 300);
+            }
+        });
+
+        // Add click event to scroll to top
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Append button to body
+        document.body.appendChild(backToTopBtn);
+    };
+
+    // Call the function to create back-to-top button
+    createBackToTopButton();
+
+    // Add microinteraction to search form inputs
+    const searchInputs = document.querySelectorAll('.form-control, .form-select');
+    searchInputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'scale(1.02)';
+            this.parentElement.style.transition = 'transform 0.3s ease';
+        });
+
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'scale(1)';
+        });
+    });
+</script>

@@ -7,12 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import tn.pi.entity.Doctor;
-import tn.pi.entity.Patient;
 import tn.pi.repository.DoctorRepository;
 
+import java.util.List;
 import java.util.Optional;
-
 @Controller
 public class DoctorController {
 
@@ -71,7 +71,22 @@ public class DoctorController {
     }
 
     @GetMapping("/doctor")
-    public String showDoctors() {
-        return "Doctor";
+    public String showDoctors(
+            @RequestParam(value = "doctorName", required = false, defaultValue = "") String doctorName,
+            @RequestParam(value = "city", required = false, defaultValue = "") String city,
+            @RequestParam(value = "specialty", required = false, defaultValue = "") String specialty,
+            Model model) {
+        // Fetch doctors from the database based on search criteria
+        List<Doctor> doctors = doctorRepository.findByNameContainingIgnoreCaseAndCityContainingIgnoreCaseAndSpecialtyContainingIgnoreCase(
+                doctorName, city, specialty);
+
+        // Add the doctors list to the model
+        model.addAttribute("doctors", doctors);
+        // Add search parameters back to the model to preserve form state
+        model.addAttribute("doctorName", doctorName);
+        model.addAttribute("city", city);
+        model.addAttribute("specialty", specialty);
+
+        return "Doctor"; // Return the Doctor.html template
     }
 }

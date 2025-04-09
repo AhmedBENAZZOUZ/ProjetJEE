@@ -6,191 +6,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Page Docteur</title>
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
   <script type="module" th:src="@{/js/cities.js}"></script>
   <script type="module" th:src="@{/js/specialties.js}"></script>
   <style>
     .search-results-container {
-      border: 2px solid #ccc; /* Bordure grise autour des résultats */
-      border-radius: 10px; /* Coins arrondis */
-      padding: 20px; /* Espacement interne */
-      background-color: #f9f9f9; /* Couleur de fond claire */
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      padding: 20px;
+      background-color: #f9f9f9;
     }
   </style>
 </head>
 <body>
-
 <div layout:fragment="content">
   <div class="container mt-4">
     <div class="row">
-      <!-- Colonne gauche : Formulaire de recherche -->
+      <!-- Search Form -->
       <div class="col-md-3">
         <h4>Recherche Docteur</h4>
-        <form>
+        <form th:action="@{/doctor}" method="get">
           <div class="mb-3">
             <label for="doctorName" class="form-label">Nom du Docteur</label>
-            <input type="text" class="form-control" id="doctorName" placeholder="Nom du docteur">
+            <input type="text" class="form-control" id="doctorName" name="doctorName" th:value="${doctorName}" placeholder="Nom du docteur">
           </div>
-
-          <!-- Ville -->
           <div class="mb-3">
             <label for="city" class="form-label">Ville</label>
-            <select class="form-select" id="city">
-              <option selected disabled>Choisir une ville</option>
+            <select class="form-select" id="city" name="city">
+              <option selected disabled value="">Choisir une ville</option>
+              <!-- Populated by JavaScript -->
             </select>
           </div>
-
-          <!-- Délégation -->
-<!--          <div class="mb-3">-->
-<!--            <label for="delegation" class="form-label">Délégation</label>-->
-<!--            <select class="form-select" id="delegation">-->
-<!--              <option selected disabled>Choisir une délégation</option>-->
-<!--            </select>-->
-<!--          </div>-->
-
-          <!-- Spécialité -->
           <div class="mb-3">
             <label for="specialty" class="form-label">Spécialité</label>
-            <select class="form-select" id="specialty">
-              <option selected disabled>Choisir une spécialité</option>
+            <select class="form-select" id="specialty" name="specialty">
+              <option selected disabled value="">Choisir une spécialité</option>
+              <!-- Populated by JavaScript -->
             </select>
           </div>
-
-          <!-- Bouton "Trouver" -->
           <button type="submit" class="btn btn-primary">Trouver</button>
         </form>
       </div>
 
-      <!-- Colonne centrale : Résultats -->
+      <!-- Search Results -->
       <div class="col-md-9">
         <h4>Résultats de recherche</h4>
         <div class="search-results-container">
           <div class="row">
-            <!-- Exemple de résultat (Dr. Anna) -->
-            <div class="col-md-4 mb-4">
+            <!-- Dynamically render doctors from the database -->
+            <div th:each="doctor : ${doctors}" class="col-md-4 mb-4">
               <div class="card" style="width: 100%;">
-                <img src="/images/anna.jpg.jpg" class="card-img-top" alt="Dr. Anna, Spécialiste en médecine nucléaire" style="height: 200px; object-fit: cover;">
+                <img src="/images/default-doctor.png" class="card-img-top" th:alt="${doctor.name}" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
-                  <h5 class="card-title">Dr. Anna</h5>
-                  <p class="card-text">Spécialiste en médecine nucléaire, Tunis.</p>
-                  <a href="/Confirmationn.html" class="btn btn-primary">Prendre Rendez-vous</a>
+                  <h5 class="card-title" th:text="${doctor.name}"></h5>
+                  <p class="card-text" th:text="${doctor.specialty}"></p>
+                  <p class="card-text" th:text="${doctor.city}"></p>
+                  <a th:href="@{/Confirmationn.html}" class="btn btn-primary">Prendre Rendez-vous</a>
                 </div>
               </div>
             </div>
-
-            <!-- Exemple de résultat (Dr. Marc) -->
-            <div class="col-md-4 mb-4">
-              <div class="card" style="width: 100%;">
-                <img src="/images/a.jpg" class="card-img-top" alt="Dr. Marc, Cardiologue" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                  <h5 class="card-title">Dr. Marc</h5>
-                  <p class="card-text">Cardiologue, Paris.</p>
-                  <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
-                </div>
-              </div>
-            </div>
-
-            <!-- Exemple de résultat (Dr. Sofia) -->
-            <div class="col-md-4 mb-4">
-              <div class="card" style="width: 100%;">
-                <img src="/images/b.jpg" class="card-img-top" alt="Dr. Sofia, Dermatologue" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                  <h5 class="card-title">Dr. Sofia</h5>
-                  <p class="card-text">Dermatologue, Sfax.</p>
-                  <a href="#" class="btn btn-primary">Prendre Rendez-vous</a>
-                </div>
-              </div>
+            <!-- Show message if no doctors found -->
+            <div th:if="${#lists.isEmpty(doctors)}" class="col-12">
+              <p class="text-center">Aucun docteur trouvé.</p>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script pour charger les villes et spécialités depuis JS et gérer les résultats -->
-    <script type="module">
-      import { cities } from '/js/cities.js';
-      import { specialties } from '/js/specialties.js';
-
-      // Populate cities dropdown
-      const citySelect = document.getElementById('city');
-      cities.forEach(city => {
-        const option = document.createElement('option');
-        option.value = city;
-        option.textContent = city;
-        citySelect.appendChild(option);
-      });
-
-      // Populate specialties dropdown
-      const specialtySelect = document.getElementById('specialty');
-      specialties.forEach(specialty => {
-        const option = document.createElement('option');
-        option.value = specialty;
-        option.textContent = specialty;
-        specialtySelect.appendChild(option);
-      });
-
-      // Exemple de données de médecins
-      const doctors = [
-        { name: 'Dr. Anna', specialty: 'Médecine générale', city: 'Tunis', delegation: 'Cité El Khadra' },
-        { name: 'Dr. Ali', specialty: 'Cardiologie', city: 'Sfax', delegation: 'Sfax Ville' },
-        { name: 'Dr. Marie', specialty: 'Dermatologie', city: 'Sousse', delegation: 'Sousse Ville' },
-      ];
-
-      // Fonction pour afficher les résultats de la recherche
-      function displayResults() {
-        const doctorName = document.getElementById('doctorName').value.toLowerCase();
-        const city = document.getElementById('city').value;
-        const delegation = document.getElementById('delegation').value;
-        const specialty = document.getElementById('specialty').value;
-
-        // Filtrer les médecins en fonction des critères
-        const filteredDoctors = doctors.filter(doctor => {
-          return (
-                  (doctorName === '' || doctor.name.toLowerCase().includes(doctorName)) &&
-                  (city === '' || doctor.city === city) &&
-                  (delegation === '' || doctor.delegation === delegation) &&
-                  (specialty === '' || doctor.specialty === specialty)
-          );
-        });
-
-        // Mettre à jour l'affichage des résultats
-        const resultsContainer = document.querySelector('.search-results-container .row');
-        resultsContainer.innerHTML = ''; // Réinitialiser les résultats
-
-        // Afficher les médecins filtrés
-        filteredDoctors.forEach(doctor => {
-          const doctorCard = document.createElement('div');
-          doctorCard.classList.add('col-md-4');
-          doctorCard.innerHTML = `
-          <div class="card mb-3">
-            <div class="card-body text-center">
-              <img src="/images/anna.jpg.jpg" class="rounded mb-3" alt="..." style="max-width: 100%; height: auto;">
-              <h5 class="card-title">${doctor.name}</h5>
-              <p class="card-text">${doctor.specialty}, ${doctor.city}</p>
-              <a href="#" class="btn btn-success">Prendre Rendez-vous</a>
-            </div>
-          </div>
-        `;
-          resultsContainer.appendChild(doctorCard);
-        });
-      }
-
-      // Appeler displayResults lorsque le formulaire est soumis ou que des filtres sont modifiés
-      document.querySelector('form').addEventListener('submit', function(event) {
-        event.preventDefault(); // Empêcher la soumission du formulaire
-        displayResults();
-      });
-
-      // Appeler displayResults lorsque les filtres sont modifiés
-      document.querySelectorAll('select').forEach(function(select) {
-        select.addEventListener('change', displayResults);
-      });
-    </script>
   </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript for dropdowns only -->
+  <script type="module">
+    import { cities } from '/js/cities.js';
+    import { specialties } from '/js/specialties.js';
+
+    // Populate cities dropdown
+    const citySelect = document.getElementById('city');
+    cities.forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      if (city === '[[${city}]]') option.selected = true; // Preserve selected value
+      citySelect.appendChild(option);
+    });
+
+    // Populate specialties dropdown
+    const specialtySelect = document.getElementById('specialty');
+    specialties.forEach(specialty => {
+      const option = document.createElement('option');
+      option.value = specialty;
+      option.textContent = specialty;
+      if (specialty === '[[${specialty}]]') option.selected = true; // Preserve selected value
+      specialtySelect.appendChild(option);
+    });
+  </script>
+</div>
 </body>
 </html>
