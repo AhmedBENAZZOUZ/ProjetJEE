@@ -81,4 +81,35 @@ public class PatientController {
         session.invalidate();
         return "redirect:/";
     }
+    @GetMapping("/profile")
+    public String showProfile(Model model, HttpSession session) {
+        Patient patient = (Patient) session.getAttribute("loggedInPatient");
+        if (patient == null) {
+            return "redirect:/login";
+        }
+        model.addAttribute("patient", patient);
+        return "Profile";
+    }
+
+    @PostMapping("/profile")
+    public String updateProfile(@Valid Patient updatedPatient, BindingResult result, HttpSession session) {
+        if (result.hasErrors()) {
+            return "Profile";
+        }
+
+        Patient loggedInPatient = (Patient) session.getAttribute("loggedInPatient");
+        if (loggedInPatient == null) {
+            return "redirect:/login";
+        }
+
+        // garder l'ancien ID et email
+        updatedPatient.setId(loggedInPatient.getId());
+        updatedPatient.setEmail(loggedInPatient.getEmail());
+
+        patientRepo.save(updatedPatient);
+        session.setAttribute("loggedInPatient", updatedPatient);
+
+        return "redirect:/profile?success";
+    }
+
 }

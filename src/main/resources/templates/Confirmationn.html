@@ -1,33 +1,156 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="Navbar.html">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
-  <title>Confirmation de Rendez-vous</title>
+  <title>Prendre Rendez-vous</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+    }
 
+    .scheduler-container {
+      max-width: 800px;
+      margin: 50px auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .scheduler-container h5 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-transform: uppercase;
+      color: #333;
+    }
+
+    #selectedDoctor {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      color: #007bff;
+    }
+
+    .date-picker {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .date-card {
+      min-width: 80px;
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .date-card.selected, .date-card:hover {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+
+    .time-picker {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .time-slot {
+      padding: 10px 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .time-slot.selected, .time-slot:hover {
+      background: #007bff;
+      color: #fff;
+      border-color: #007bff;
+    }
+  </style>
 </head>
 <body>
-<div class="container text-center">
-  <h1 class="mb-4">Confirmation de votre rendez-vous</h1>
-  <p>Voici les étapes de votre prise de rendez-vous :</p>
-  <div class="steps">
-    <div class="step">
-      <h3>1. Choisir votre créneau horaire</h3>
-      <p>Vous pouvez choisir un créneau horaire qui vous convient pour votre consultation.</p>
-    </div>
-    <div class="step">
-      <h3>2. Remplir vos informations</h3>
-      <p>Veuillez renseigner vos informations personnelles pour confirmer votre rendez-vous.</p>
-    </div>
-    <div class="step">
-      <h3>3. Confirmation de votre rendez-vous</h3>
-      <p>Une fois toutes les informations remplies, vous recevrez une confirmation par email.</p>
-    </div>
+<div class="scheduler-container">
+  <h5>VEUILLEZ CHOISIR LA DATE DU RENDEZ-VOUS</h5>
+  <p id="selectedDoctor">Rendez-vous avec : [Nom du docteur]</p>
+  <div class="date-picker" id="datePicker">
+    <!-- Les dates seront générées dynamiquement par JavaScript -->
   </div>
 
+  <h5>VEUILLEZ CHOISIR L'HEURE DU RENDEZ-VOUS</h5>
+  <div class="time-picker" id="timePicker">
+    <div class="time-slot">15:30</div>
+    <div class="time-slot">16:00</div>
+    <div class="time-slot">16:30</div>
+  </div>
 </div>
+
+<script>
+  // Récupérer le paramètre 'doctor' de l'URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const doctorName = urlParams.get('doctor') || 'Non spécifié';
+  document.getElementById('selectedDoctor').textContent = `Rendez-vous avec : ${doctorName}`;
+
+  // Générer les dates à partir de la date actuelle
+  function generateDates() {
+    const datePicker = document.getElementById('datePicker');
+    const today = new Date();
+    const daysOfWeek = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
+    const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+
+      const dayName = daysOfWeek[date.getDay()];
+      const dayNumber = date.getDate().toString().padStart(2, '0');
+      const monthName = months[date.getMonth()];
+
+      const dateCard = document.createElement('div');
+      dateCard.classList.add('date-card');
+      if (i === 0) dateCard.classList.add('selected');
+
+      dateCard.innerHTML = `
+        <div class="day">${dayName}</div>
+        <div class="date">${dayNumber}</div>
+        <div class="month">${monthName}</div>
+      `;
+
+      datePicker.appendChild(dateCard);
+    }
+
+    const dateCards = document.querySelectorAll('.date-card');
+    dateCards.forEach(card => {
+      card.addEventListener('click', () => {
+        dateCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+      });
+    });
+  }
+
+  // Sélectionner l'heure
+  const timeSlots = document.querySelectorAll('.time-slot');
+  timeSlots.forEach(slot => {
+    slot.addEventListener('click', () => {
+      timeSlots.forEach(s => s.classList.remove('selected'));
+      slot.classList.add('selected');
+    });
+  });
+
+  // Initialiser au chargement
+  window.onload = generateDates;
+</script>
 </body>
 </html>

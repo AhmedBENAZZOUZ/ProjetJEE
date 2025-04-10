@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Profile</title>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/" style="color: #0d6efd;">
+            <i class="bi bi-heart-pulse"></i> DoctorPortal
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/profile}" style="color: #0d6efd;">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/logout}" style="color: #0d6efd;">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- End Navbar -->
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Profile</h2>
+    </div>
+
+    <div class="card p-4">
+        <form th:action="@{/doctor/profile}" th:object="${doctor}" method="post">
+            <div th:if="${param.success}" class="alert alert-success">
+                Profile updated successfully!
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="name" class="form-label">Name:</label>
+                    <input type="text" id="name" class="form-control" th:field="*{name}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" id="email" class="form-control" th:field="*{email}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="specialty" class="form-label">Specialty:</label>
+                    <input type="text" id="specialty" class="form-control" th:field="*{specialty}" required>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <input type="text" id="phone" class="form-control" th:field="*{phone}" required>
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="address" class="form-label">Address:</label>
+                    <input type="text" id="address" class="form-control" th:field="*{address}" required>
+                </div>
+                <div class="col-md-6">
+                    <label for="city" class="form-label">City:</label>
+                    <input type="text" id="city" class="form-control" th:field="*{city}" required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" class="form-control" th:field="*{password}" required>
+            </div>
+
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
