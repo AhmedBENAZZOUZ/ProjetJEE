@@ -23,11 +23,12 @@
         /* Hero Section */
         .hero-section {
             position: relative;
-            height: 500px;
+            height: 600px;
             overflow: hidden;
             background-image: url('/images/doctors.jpg');
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
         }
 
         .hero-overlay {
@@ -36,7 +37,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to right, rgba(0, 60, 113, 0.8), rgba(0, 123, 255, 0.6));
+            background: linear-gradient(135deg, rgba(0, 60, 113, 0.85), rgba(0, 123, 255, 0.75));
             display: flex;
             align-items: center;
             justify-content: center;
@@ -45,20 +46,22 @@
         }
 
         .hero-content h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
             color: #fff;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            animation: fadeInUp 1s ease;
         }
 
         .hero-content p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
             color: #fff;
-            max-width: 700px;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
+            animation: fadeInUp 1s ease 0.3s both;
         }
 
         .btn-hero {
@@ -83,27 +86,30 @@
         /* Search Form */
         .search-container {
             position: relative;
-            margin-top: -80px;
+            margin-top: -100px;
             z-index: 100;
         }
 
         .search-card {
             background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
             overflow: hidden;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: -100px;
+            position: relative;
+            z-index: 100;
         }
 
         .search-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
         .search-card .card-header {
             background: linear-gradient(135deg, #1e88e5, #0d47a1);
             color: white;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
             border-bottom: none;
         }
@@ -111,11 +117,11 @@
         .search-card .card-header h3 {
             font-weight: 600;
             margin: 0;
-            font-size: 1.75rem;
+            font-size: 2rem;
         }
 
         .search-card .card-body {
-            padding: 30px;
+            padding: 40px;
         }
 
         .form-control, .form-select {
@@ -200,28 +206,31 @@
 
         .feature-box {
             text-align: center;
-            padding: 30px;
-            border-radius: 16px;
+            padding: 40px 30px;
+            border-radius: 20px;
             background-color: #fff;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
             height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .feature-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-15px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: rgba(30, 136, 229, 0.2);
         }
 
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 20px;
-            transition: transform 0.3s ease;
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 25px;
+            transition: transform 0.4s ease;
+            object-fit: contain;
         }
 
         .feature-box:hover .feature-icon {
-            transform: scale(1.1);
+            transform: scale(1.1) rotate(5deg);
         }
 
         .feature-box h4 {
@@ -244,9 +253,9 @@
         }
 
         .carousel-item {
-            border-radius: 16px;
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
         }
 
         .carousel-item img {
@@ -255,9 +264,9 @@
         }
 
         .carousel-caption {
-            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-            border-radius: 0 0 16px 16px;
-            padding: 30px;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+            border-radius: 0 0 20px 20px;
+            padding: 40px;
             bottom: 0;
             left: 0;
             right: 0;
@@ -265,13 +274,14 @@
         }
 
         .carousel-caption h5 {
-            font-size: 1.75rem;
+            font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .carousel-caption p {
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
         }
 
         /* Tabs Section */
@@ -282,23 +292,24 @@
 
         .nav-tabs {
             border-bottom: 2px solid #e0e0e0;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
         .nav-tabs .nav-link {
             border: none;
             color: #666;
             font-weight: 500;
-            padding: 15px 20px;
-            border-radius: 0;
+            padding: 20px 30px;
+            border-radius: 10px 10px 0 0;
             margin-right: 10px;
             position: relative;
             transition: all 0.3s ease;
+            font-size: 1.1rem;
         }
 
         .nav-tabs .nav-link.active {
             color: #1e88e5;
-            background-color: transparent;
+            background-color: #f8fafc;
         }
 
         .nav-tabs .nav-link.active:after {
@@ -313,10 +324,10 @@
         }
 
         .tab-content {
-            padding: 30px;
+            padding: 40px;
             background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         /* Footer */
@@ -324,6 +335,17 @@
             background-color: #0c2d48;
             color: #fff;
             padding: 80px 0 0;
+            width: 100vw;
+            position: relative;
+            left: 50%;
+            right: 50%;
+            margin-left: -50vw;
+            margin-right: -50vw;
+        }
+
+        .footer .container {
+            max-width: 100%;
+            padding: 0 2rem;
         }
 
         .footer h5 {
@@ -349,6 +371,9 @@
         .footer-list {
             list-style: none;
             padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
 
         .footer-list li {
@@ -385,6 +410,12 @@
             background-color: #072238;
             padding: 20px 0;
             margin-top: 60px;
+            width: 100%;
+        }
+
+        .footer-bottom .container {
+            max-width: 100%;
+            padding: 0 2rem;
         }
 
         .footer-bottom a {
@@ -395,19 +426,78 @@
         /* Responsive Adjustments */
         @media (max-width: 992px) {
             .hero-content h1 {
-                font-size: 2.5rem;
+                font-size: 3rem;
             }
 
-            .search-container {
+            .hero-content p {
+                font-size: 1.3rem;
+            }
+
+            .search-card {
                 margin-top: -50px;
             }
 
             .feature-box {
                 margin-bottom: 30px;
             }
+
+            .footer-list {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
+            .hero-section {
+                height: 500px;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.1rem;
+            }
+
+            .search-card .card-body {
+                padding: 30px;
+            }
+
+            .search-form-row > div {
+                margin-bottom: 20px;
+            }
+
+            .search-card {
+                margin-top: -30px;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .carousel-caption {
+                padding: 20px;
+            }
+
+            .carousel-caption h5 {
+                font-size: 1.5rem;
+            }
+
+            .carousel-caption p {
+                font-size: 1rem;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 15px 20px;
+                font-size: 1rem;
+            }
+
+            .tab-content {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 576px) {
             .hero-section {
                 height: 400px;
             }
@@ -420,20 +510,39 @@
                 font-size: 1rem;
             }
 
+            .search-card .card-header {
+                padding: 20px;
+            }
+
+            .search-card .card-header h3 {
+                font-size: 1.5rem;
+            }
+
             .search-card .card-body {
                 padding: 20px;
             }
 
-            .search-form-row > div {
-                margin-bottom: 15px;
+            .footer {
+                padding: 60px 0 0;
             }
 
-            .search-container {
-                margin-top: -30px;
+            .footer .container {
+                padding: 0 1rem;
             }
 
-            .section-title h2 {
-                font-size: 2rem;
+            .footer-bottom .container {
+                padding: 0 1rem;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
     </style>
