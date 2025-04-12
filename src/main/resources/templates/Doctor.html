@@ -62,9 +62,9 @@
                   <h5 class="card-title" th:text="${doctor.name}"></h5>
                   <p class="card-text" th:text="${doctor.specialty}"></p>
                   <p class="card-text" th:text="${doctor.city}"></p>
-                  <a th:href="@{/Confirmationn.html}" class="btn btn-primary">Prendre Rendez-vous</a>
+                  <a th:href="@{/Confirmationn.html(doctorId=${doctor.id})}" class="btn btn-primary">Prendre Rendez-vous</a>
                 </div>
-              </div>
+              </div>  
             </div>
             <!-- Show message if no doctors found -->
             <div th:if="${#lists.isEmpty(doctors)}" class="col-12">

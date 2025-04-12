@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Profile</title>
-    <link rel="stylesheet" href="/webjars/bootstrap/5.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/webjars/bootstrap-icons/1.10.5/font/bootstrap-icons.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mon Profil</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="shortcut icon" href="/images/LogoPulseBlue-removebg.png" type="image/x-icon">
     <style>
         body {
             background-color: #f8f9fa;
@@ -12,15 +14,26 @@
         .card {
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
         }
-        h2 {
-            color: #0d6efd;
+        .appointment-card {
+            transition: all 0.3s ease;
+        }
+        .appointment-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        .cancel-btn {
+            transition: all 0.3s ease;
+        }
+        .cancel-btn:hover {
+            background-color: #dc3545;
+            color: white;
         }
     </style>
 </head>
 <body>
-
-<!-- Navbar -->
+    <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="/" style="color: #0d6efd;">
@@ -32,7 +45,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{/profile}" style="color: #0d6efd;">Profile</a>
+                    <a class="nav-link" th:href="@{/doctor/profile}" style="color: #0d6efd;">Profile</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/logout}" style="color: #0d6efd;">Logout</a>
@@ -42,66 +55,113 @@
     </div>
 </nav>
 <!-- End Navbar -->
+    <div class="container mt-5">
+        <!-- Profile Information -->
+        <div class="card p-4">
+            <h2 class="mb-4">Mon Profil</h2>
+            <form th:action="@{/profile}" th:object="${patient}" method="post">
+                <div th:if="${param.success}" class="alert alert-success">
+                    Profil mis à jour avec succès!
+                </div>
 
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>My Profile</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom:</label>
+                            <input type="text" class="form-control" id="name" th:field="*{name}" readonly>
+                            <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required readonly>
+                            <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Téléphone:</label>
+                            <input type="text" class="form-control" id="phone" th:field="*{phone}" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse:</label>
+                            <input type="text" class="form-control" id="address" th:field="*{address}" required>
+                            <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Mot de passe:</label>
+                    <input type="password" class="form-control" id="password" th:field="*{password}">
+                    <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Enregistrer les modifications
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Future Appointments -->
+        <div class="card p-4">
+            <h3 class="mb-4">Mes Rendez-vous à Venir</h3>
+            <div th:if="${#lists.isEmpty(futureAppointments)}" class="alert alert-info">
+                Vous n'avez pas de rendez-vous à venir.
+            </div>
+            <div class="row" th:unless="${#lists.isEmpty(futureAppointments)}">
+                <div class="col-md-6 mb-3" th:each="appointment : ${futureAppointments}">
+                    <div class="card appointment-card">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${appointment.doctor.name}"></h5>
+                            <p class="card-text">
+                                <strong>Date et Heure:</strong> 
+                                <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>Spécialité:</strong> 
+                                <span th:text="${appointment.doctor.specialty}"></span>
+                            </p>
+                            <form th:action="@{/appointment/cancel/{id}(id=${appointment.id})}" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger cancel-btn">
+                                    <i class="bi bi-x-circle"></i> Annuler
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Past Appointments -->
+        <div class="card p-4">
+            <h3 class="mb-4">Historique des Rendez-vous</h3>
+            <div th:if="${#lists.isEmpty(pastAppointments)}" class="alert alert-info">
+                Vous n'avez pas encore d'historique de rendez-vous.
+            </div>
+            <div class="row" th:unless="${#lists.isEmpty(pastAppointments)}">
+                <div class="col-md-6 mb-3" th:each="appointment : ${pastAppointments}">
+                    <div class="card appointment-card">
+                        <div class="card-body">
+                            <h5 class="card-title" th:text="${appointment.doctor.name}"></h5>
+                            <p class="card-text">
+                                <strong>Date et Heure:</strong> 
+                                <span th:text="${#temporals.format(appointment.appointmentDateTime, 'dd/MM/yyyy HH:mm')}"></span>
+                            </p>
+                            <p class="card-text">
+                                <strong>Spécialité:</strong> 
+                                <span th:text="${appointment.doctor.specialty}"></span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="card p-4">
-        <form th:action="@{/profile}" th:object="${patient}" method="post">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="name" class="form-label">Name:</label>
-                    <input type="text" id="name" class="form-control" th:field="*{name}" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="email" class="form-label">Email:</label>
-                    <input type="email" id="email" class="form-control" th:field="*{email}" required>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="birthDate" class="form-label">Birth Date:</label>
-                    <input type="date" id="birthDate" class="form-control" th:field="*{birthDate}" required>
-                </div>
-                <div class="col-md-6">
-                    <label for="phone" class="form-label">Phone:</label>
-                    <input type="text" id="phone" class="form-control" th:field="*{phone}" required>
-                </div>
-            </div>
-
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="gender" class="form-label">Gender:</label>
-                    <select id="gender" class="form-select" th:field="*{gender}" required>
-                        <option value="">Select</option>
-                        <option value="Male" th:selected="${patient.gender == 'Male'}">Male</option>
-                        <option value="Female" th:selected="${patient.gender == 'Female'}">Female</option>
-                        <option value="Other" th:selected="${patient.gender == 'Other'}">Other</option>
-                    </select>
-                </div>
-                <div class="col-md-6">
-                    <label for="address" class="form-label">Address:</label>
-                    <input type="text" id="address" class="form-control" th:field="*{address}" required>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <label for="password" class="form-label">Password:</label>
-                <input type="password" id="password" class="form-control" th:field="*{password}" required>
-            </div>
-
-            <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Save Changes
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

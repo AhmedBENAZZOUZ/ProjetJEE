@@ -10,18 +10,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import tn.pi.entity.Doctor;
 import tn.pi.repository.DoctorRepository;
+import tn.pi.entity.Appointment;
+import tn.pi.repository.AppointmentRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalTime;
 
 @Controller
 public class DoctorController {
 
     private final DoctorRepository doctorRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    // Constructor injection for DoctorRepository
-    public DoctorController(DoctorRepository doctorRepository) {
+    // Constructor injection for DoctorRepository and AppointmentRepository
+    public DoctorController(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
         this.doctorRepository = doctorRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     // Registration page for Doctor
@@ -34,15 +39,36 @@ public class DoctorController {
 
     // Handle doctor registration form submission
     @PostMapping("/doctor/register")
-    public String registerDoctor(@Valid Doctor doctor, BindingResult bindingResult) {
+    public String registerDoctor(@Valid Doctor doctor, BindingResult bindingResult, Model model) {
+        // Check for validation errors
         if (bindingResult.hasErrors()) {
-            return "RegisterDoctor"; // Return registration page in case of validation errors
+            return "RegisterDoctor";
         }
+
+        // Check if email already exists
+        Optional<Doctor> existingDoctor = doctorRepository.findByEmail(doctor.getEmail());
+        if (existingDoctor.isPresent()) {
+            bindingResult.rejectValue("email", "error.doctor", "Email already exists");
+            return "RegisterDoctor";
+        }
+
         try {
-            doctorRepository.save(doctor); // Save the doctor object to the repository
-            return "redirect:/"; // Redirect to home page after successful registration
+            // Set default values for consultation times
+            if (doctor.getStartWorkTime() == null) {
+                doctor.setStartWorkTime(LocalTime.of(9, 0)); // 09:00
+            }
+            if (doctor.getEndConsultationTime() == null) {
+                doctor.setEndConsultationTime(LocalTime.of(17, 0)); // 17:00
+            }
+            if (doctor.getConsultationDuration() == null) {
+                doctor.setConsultationDuration(30);
+            }
+
+            doctorRepository.save(doctor);
+            return "redirect:/doctor/login?registered";
         } catch (Exception e) {
-            return "RegisterDoctor"; // Return to registration page if an error occurs
+            model.addAttribute("error", "An error occurred during registration: " + e.getMessage());
+            return "RegisterDoctor";
         }
     }
 
@@ -97,49 +123,82 @@ public class DoctorController {
         return "Doctor"; // Return the Doctor.html template
     }
 
-    // Afficher le profil du docteur
-    // Afficher le profil du docteur
+    // Show the doctor's profile
     @GetMapping("/doctor/profile")
-    public String showProfile(HttpSession session, Model model) {
+    public String showProfile(HttpSession session, Model model, @RequestParam(value = "setup", required = false) String setup) {
         Doctor loggedInDoctor = (Doctor) session.getAttribute("loggedInDoctor");
         if (loggedInDoctor == null) {
-            return "redirect:/doctor/login"; // Si le docteur n'est pas connecté, redirige vers la page de login
+            return "redirect:/doctor/login"; // Redirect to login if the doctor is not logged in
         }
-        model.addAttribute("doctor", loggedInDoctor); // Ajouter l'objet doctor au modèle pour l'afficher
-        return "ProfileDoctor"; // Retourner la vue du profil
+        
+        // Fetch doctor's appointments
+        List<Appointment> appointments = appointmentRepository.findByDoctorOrderByAppointmentDateTimeAsc(loggedInDoctor);
+        
+        model.addAttribute("doctor", loggedInDoctor);
+        model.addAttribute("appointments", appointments);
+        
+        if ("true".equals(setup)) {
+            model.addAttribute("setupMessage", "Please set up your working hours and consultation duration.");
+        }
+        return "ProfileDoctor";
     }
 
-    // Mettre à jour les informations du docteur
+    // Update the doctor's profile
     @PostMapping("/doctor/profile")
-    public String updateProfile(@Valid Doctor updatedDoctor, BindingResult result, HttpSession session) {
-        if (result.hasErrors()) {
-            return "ProfileDoctor"; // Si des erreurs de validation existent, retourner la page de profil
-        }
-
+    public String updateProfile(@Valid Doctor updatedDoctor, BindingResult bindingResult, HttpSession session, Model model) {
         Doctor loggedInDoctor = (Doctor) session.getAttribute("loggedInDoctor");
         if (loggedInDoctor == null) {
-            return "redirect:/doctor/login"; // Si l'utilisateur n'est pas connecté, rediriger vers la page de login
+            return "redirect:/doctor/login"; // Redirect to login if the doctor is not logged in
         }
 
-        // Sauvegarder les informations mises à jour dans la base de données
-        updatedDoctor.setId(loggedInDoctor.getId()); // Assurez-vous que l'ID est bien défini
-        System.out.println("Updated Doctor: " + updatedDoctor); // Ajouter un log pour vérifier les changements
-
-        doctorRepository.save(updatedDoctor);
-
-        // Vérifiez si l'objet a bien été sauvegardé dans la base de données
-        Doctor savedDoctor = doctorRepository.findById(updatedDoctor.getId()).orElse(null);
-        if (savedDoctor != null) {
-            System.out.println("Saved Doctor: " + savedDoctor);
-        } else {
-            System.out.println("Failed to update the doctor.");
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("doctor", updatedDoctor);
+            return "ProfileDoctor"; // Return the profile page if there are validation errors
         }
 
-        session.setAttribute("loggedInDoctor", updatedDoctor); // Mettre à jour la session avec les nouvelles données
+        try {
+            // Check for email uniqueness (excluding the current doctor)
+            Optional<Doctor> existingDoctor = doctorRepository.findByEmail(updatedDoctor.getEmail());
+            if (existingDoctor.isPresent() && !existingDoctor.get().getId().equals(loggedInDoctor.getId())) {
+                bindingResult.rejectValue("email", "error.doctor", "Email already exists");
+                model.addAttribute("doctor", updatedDoctor);
+                return "ProfileDoctor";
+            }
 
-        return "redirect:/doctor/profile?success"; // Rediriger avec un message de succès
+            // Update the doctor's details
+            loggedInDoctor.setName(updatedDoctor.getName());
+            loggedInDoctor.setEmail(updatedDoctor.getEmail());
+            loggedInDoctor.setPhone(updatedDoctor.getPhone());
+            loggedInDoctor.setAddress(updatedDoctor.getAddress());
+            loggedInDoctor.setCity(updatedDoctor.getCity());
+            loggedInDoctor.setSpecialty(updatedDoctor.getSpecialty());
+            loggedInDoctor.setStartWorkTime(updatedDoctor.getStartWorkTime());
+            loggedInDoctor.setEndConsultationTime(updatedDoctor.getEndConsultationTime());
+            loggedInDoctor.setConsultationDuration(updatedDoctor.getConsultationDuration());
+
+            // Only update the password if a new one is provided
+            if (updatedDoctor.getPassword() != null && !updatedDoctor.getPassword().isEmpty()) {
+                loggedInDoctor.setPassword(updatedDoctor.getPassword());
+            }
+
+            // Save the updated doctor to the database
+            doctorRepository.save(loggedInDoctor);
+            System.out.println("Updated Doctor: " + loggedInDoctor);
+
+            // Verify the save operation
+            Doctor savedDoctor = doctorRepository.findById(loggedInDoctor.getId()).orElse(null);
+            if (savedDoctor != null) {
+                System.out.println("Saved Doctor: " + savedDoctor);
+            } else {
+                System.out.println("Failed to update the doctor.");
+            }
+
+            session.setAttribute("loggedInDoctor", loggedInDoctor); // Update the session with the new data
+            return "redirect:/doctor/profile?success"; // Redirect with a success message
+        } catch (Exception e) {
+            model.addAttribute("error", "An error occurred while updating the profile: " + e.getMessage());
+            model.addAttribute("doctor", updatedDoctor);
+            return "ProfileDoctor";
+        }
     }
-
-
-
 }

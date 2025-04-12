@@ -23,58 +23,74 @@
             <h3 class="mb-0">Doctor Registration</h3>
           </div>
           <div class="card-body p-4">
-            <form th:action="@{/doctor/register}" method="post">
+            <form th:action="@{/doctor/register}" method="post" th:object="${doctor}">
+              <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger">
+                <ul>
+                  <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+                </ul>
+              </div>
+              
               <!-- Full Name -->
               <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your full name" required th:field="${doctor.name}">
+                <input type="text" class="form-control" id="name" th:field="*{name}" placeholder="Enter your full name" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
               </div>
+              
               <!-- Email -->
               <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email address" required th:field="${doctor.email}">
+                <input type="email" class="form-control" id="email" th:field="*{email}" placeholder="Enter your email address" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
               </div>
+              
               <!-- Phone -->
               <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" id="phone" name="phone" class="form-control" placeholder="Enter a Phone Number"
-                       required pattern="^[0-9]{8}$" th:field="${doctor.phone}">
+                <input type="text" class="form-control" id="phone" th:field="*{phone}" placeholder="Enter a Phone Number" required pattern="^[0-9]{8}$">
+                <div class="text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
               </div>
+              
               <!-- Ville -->
               <div class="mb-3">
                 <label for="city" class="form-label">Ville</label>
-                <select class="form-select" id="city" name="city" required>
+                <select class="form-select" id="city" th:field="*{city}" required>
                   <option value="" selected disabled>Choisir une ville</option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('city')}" th:errors="*{city}"></div>
               </div>
+              
               <!-- Address -->
               <div class="mb-3">
                 <label for="address" class="form-label">Address</label>
-                <input type="text" id="address" name="address" class="form-control" placeholder="Enter your Address"
-                       required minlength="5" maxlength="100" th:field="${doctor.address}">
+                <input type="text" class="form-control" id="address" th:field="*{address}" placeholder="Enter your Address" required minlength="5" maxlength="100">
+                <div class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></div>
               </div>
+              
               <!-- Spécialité -->
               <div class="mb-3">
                 <label for="specialty" class="form-label">Spécialité</label>
-                <select class="form-select" id="specialty" name="specialty" required>
+                <select class="form-select" id="specialty" th:field="*{specialty}" required>
                   <option value="" selected disabled>Choisir une spécialité</option>
                 </select>
+                <div class="text-danger" th:if="${#fields.hasErrors('specialty')}" th:errors="*{specialty}"></div>
               </div>
+              
               <!-- Password -->
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <div class="input-group">
-                  <input type="password" class="form-control" id="password" name="password" placeholder="Enter a password" required th:field="${doctor.password}">
-                  <!-- <button type="button" class="btn btn-outline-secondary" onclick="togglePassword()">
-                    <i class="bi bi-eye"></i>
-                  </button> -->
+                  <input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Enter a password" required>
                 </div>
+                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
               </div>
+              
               <!-- Confirm Password -->
               <div class="mb-3">
                 <label for="confirmPassword" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
               </div>
+              
               <!-- Submit Button -->
               <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Register</button>
@@ -115,16 +131,18 @@
   <script>
     const password = document.getElementById('password');
     const confirmPassword = document.getElementById('confirmPassword');
-    confirmPassword.addEventListener('input', () => {
+    const form = document.querySelector('form');
+
+    form.addEventListener('submit', function(event) {
       if (password.value !== confirmPassword.value) {
-        confirmPassword.setCustomValidity("Passwords do not match");
-      } else {
-        confirmPassword.setCustomValidity("");
+        event.preventDefault();
+        alert('Passwords do not match!');
       }
     });
   </script>
 
   <!-- Bootstrap JS -->
   <script src="/webjars/bootstrap/5.3.1/js/bootstrap.bundle.js"></script>
+</div>
 </body>
 </html>

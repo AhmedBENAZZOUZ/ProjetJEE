@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,6 +42,10 @@ public class Patient {
     @NotBlank(message = "Password is required")
     @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
     private String password;
+
+    @OneToMany(mappedBy = "patient", fetch = FetchType.LAZY)
+    private List<Appointment> appointments;
+
     public String getEmail() {
         return email;
     }
@@ -57,4 +62,11 @@ public class Patient {
         this.password = password;
     }
 
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
 }

@@ -3,6 +3,8 @@ package tn.pi.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.time.LocalTime;
+
 
 @Entity
 @Getter
@@ -15,20 +17,20 @@ public class Doctor {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "Name is required")
     @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters")
     private String name;
 
-    @NotBlank(message = "City cannot be blank")
+    @NotBlank(message = "City is required")
     @Size(min = 2, max = 50, message = "City must be between 2 and 50 characters")
     private String city;
 
-    @NotBlank(message = "Specialty cannot be blank")
+    @NotBlank(message = "Specialty is required")
     @Size(min = 5, message = "Specialty must be minimum of 5 characters")
     private String specialty;
 
     @NotBlank(message = "Email is required")
-    @Email(message = "Invalid email format")
+    @Email(message = "Please provide a valid email address")
     private String email;
 
     @NotBlank(message = "Phone number is required")
@@ -40,11 +42,21 @@ public class Doctor {
     private String address;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    @Size(min = 8, message = "Password must be at least 8 characters long")
     private String password;
 
     @Column(nullable = false)
     private boolean active = false;
+
+    @Column(name = "start_work_time")
+    private LocalTime startWorkTime; // e.g., 09:00
+
+    @Column(name = "end_consultation_time")
+    private LocalTime endConsultationTime; // e.g., 17:00
+
+    @Min(value = 1, message = "Consultation duration must be at least 1 minute")
+    @Column(name = "consultation_duration")
+    private Integer consultationDuration;
 
     public Long getId() {
         return id;
@@ -118,4 +130,27 @@ public class Doctor {
         this.active = active;
     }
 
+    public LocalTime getStartWorkTime() {
+        return startWorkTime;
+    }
+
+    public void setStartWorkTime(LocalTime startWorkTime) {
+        this.startWorkTime = startWorkTime;
+    }
+
+    public LocalTime getEndConsultationTime() {
+        return endConsultationTime;
+    }
+
+    public void setEndConsultationTime(LocalTime endConsultationTime) {
+        this.endConsultationTime = endConsultationTime;
+    }
+
+    public Integer getConsultationDuration() {
+        return consultationDuration;
+    }
+
+    public void setConsultationDuration(Integer consultationDuration) {
+        this.consultationDuration = consultationDuration;
+    }
 }

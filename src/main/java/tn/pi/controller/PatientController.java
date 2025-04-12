@@ -2,23 +2,27 @@ package tn.pi.controller;
 
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import tn.pi.entity.Patient;
+import tn.pi.entity.Appointment;
 import tn.pi.repository.PatientRepository;
+import tn.pi.repository.AppointmentRepository;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class PatientController {
-
     private final PatientRepository patientRepo;
-    public PatientController(PatientRepository patientRepository) {
-        this.patientRepo = patientRepository;
+    private final AppointmentRepository appointmentRepository;
+
+    public PatientController(PatientRepository patientRepo, AppointmentRepository appointmentRepository) {
+        this.patientRepo = patientRepo;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @GetMapping("/")
@@ -81,13 +85,37 @@ public class PatientController {
         session.invalidate();
         return "redirect:/";
     }
+
     @GetMapping("/profile")
     public String showProfile(Model model, HttpSession session) {
-        Patient patient = (Patient) session.getAttribute("loggedInPatient");
-        if (patient == null) {
+        Patient loggedInPatient = (Patient) session.getAttribute("loggedInPatient");
+        if (loggedInPatient == null) {
             return "redirect:/login";
         }
-        model.addAttribute("patient", patient);
+
+        // Fetch the latest data from the database
+        Optional<Patient> freshPatient = patientRepo.findById(loggedInPatient.getId());
+        if (freshPatient.isPresent()) {
+            model.addAttribute("patient", freshPatient.get());
+        }
+
+        // Get current date and time
+        LocalDateTime now = LocalDateTime.now();
+        
+        // Get future appointments
+        List<Appointment> futureAppointments = appointmentRepository.findByPatientAndAppointmentDateTimeAfterOrderByAppointmentDateTimeAsc(
+            loggedInPatient, now);
+        model.addAttribute("futureAppointments", futureAppointments);
+        
+        // Get past appointments
+        List<Appointment> pastAppointments = appointmentRepository.findByPatientAndAppointmentDateTimeBeforeOrderByAppointmentDateTimeDesc(
+            loggedInPatient, now);
+        model.addAttribute("pastAppointments", pastAppointments);
+
+        // Debug log to check appointments
+        System.out.println("Future appointments found: " + (futureAppointments != null ? futureAppointments.size() : 0));
+        System.out.println("Past appointments found: " + (pastAppointments != null ? pastAppointments.size() : 0));
+        
         return "Profile";
     }
 
@@ -102,14 +130,50 @@ public class PatientController {
             return "redirect:/login";
         }
 
-        // garder l'ancien ID et email
+        // Keep the ID, email, name, gender, and birthDate from the logged-in patient
         updatedPatient.setId(loggedInPatient.getId());
         updatedPatient.setEmail(loggedInPatient.getEmail());
+        updatedPatient.setName(loggedInPatient.getName());
+        updatedPatient.setGender(loggedInPatient.getGender());
+        updatedPatient.setBirthDate(loggedInPatient.getBirthDate());
 
-        patientRepo.save(updatedPatient);
-        session.setAttribute("loggedInPatient", updatedPatient);
+        // Only update password if a new one is provided
+        if (updatedPatient.getPassword() == null || updatedPatient.getPassword().isEmpty()) {
+            updatedPatient.setPassword(loggedInPatient.getPassword());
+        }
 
-        return "redirect:/profile?success";
+        try {
+            Patient savedPatient = patientRepo.save(updatedPatient);
+            session.setAttribute("loggedInPatient", savedPatient);
+            return "redirect:/profile?success";
+        } catch (Exception e) {
+            result.rejectValue("email", "error.patient", "Error updating profile: " + e.getMessage());
+            return "Profile";
+        }
+    }
+
+    @PostMapping("/appointment/cancel/{id}")
+    public String cancelAppointment(@PathVariable Long id, HttpSession session, Model model) {
+        Patient loggedInPatient = (Patient) session.getAttribute("loggedInPatient");
+        if (loggedInPatient == null) {
+            return "redirect:/login";
+        }
+
+        Optional<Appointment> appointmentOpt = appointmentRepository.findById(id);
+        if (appointmentOpt.isPresent()) {
+            Appointment appointment = appointmentOpt.get();
+            // Verify the appointment belongs to the logged-in patient
+            if (appointment.getPatient() != null && appointment.getPatient().getId().equals(loggedInPatient.getId())) {
+                appointmentRepository.delete(appointment);
+                model.addAttribute("success", "Appointment cancelled successfully");
+            } else {
+                model.addAttribute("error", "You can only cancel your own appointments");
+            }
+        } else {
+            model.addAttribute("error", "Appointment not found");
+        }
+
+        return "redirect:/profile";
     }
 
 }
